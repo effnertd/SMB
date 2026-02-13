@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Prioritization Matrix</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            color: #2d3748;
+            background-color: #f7fafc;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        h1 {
+            color: #1a365d;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #4a5568;
+            font-size: 16px;
+        }
+        .instructions {
+            background-color: #edf2f7;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 32px;
+            border-left: 4px solid #2b6cb0;
+        }
+        .matrix-container {
+            display: flex;
+            gap: 40px;
+            margin-top: 32px;
+        }
+        .chips-container {
+            flex: 0 0 280px;
+        }
+        .chips-header {
+            font-weight: 700;
+            color: #1a365d;
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+        .chip {
+            background-color: #edf2f7;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: move;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .chip:hover {
+            background-color: #e2e8f0;
+            border-color: #2b6cb0;
+        }
+        .chip.dragging {
+            opacity: 0.5;
+        }
+        .matrix-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        .matrix {
+            width: 100%;
+            height: 600px;
+            position: relative;
+            border: 2px solid #2d3748;
+            background: linear-gradient(to right, #fef5e7 0%, #fef5e7 50%, #ffebee 50%, #ffebee 100%),
+                        linear-gradient(to top, #e8f5e9 0%, #e8f5e9 50%, #fff9c4 50%, #fff9c4 100%);
+            background-blend-mode: multiply;
+        }
+        .axis-label {
+            position: absolute;
+            font-weight: 700;
+            color: #1a365d;
+            font-size: 14px;
+        }
+        .x-axis {
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .y-axis {
+            top: 50%;
+            left: -140px;
+            transform: translateY(-50%) rotate(-90deg);
+            transform-origin: center;
+        }
+        .axis-low {
+            position: absolute;
+            font-size: 12px;
+            color: #718096;
+        }
+        .x-low {
+            bottom: -35px;
+            left: 10px;
+        }
+        .x-high {
+            bottom: -35px;
+            right: 10px;
+        }
+        .y-low {
+            bottom: 10px;
+            left: -80px;
+            transform: rotate(-90deg);
+        }
+        .y-high {
+            top: 10px;
+            left: -80px;
+            transform: rotate(-90deg);
+        }
+        .quadrant-label {
+            position: absolute;
+            font-size: 11px;
+            font-weight: 600;
+            color: #4a5568;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+        .q1 { top: 10px; right: 10px; }
+        .q2 { top: 10px; left: 10px; }
+        .q3 { bottom: 10px; left: 10px; }
+        .q4 { bottom: 10px; right: 10px; }
+        .placed-chip {
+            position: absolute;
+            background-color: #2b6cb0;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: move;
+            font-size: 13px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .placed-chip:hover {
+            background-color: #1a365d;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .controls {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        button {
+            background-color: #2b6cb0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        button:hover {
+            background-color: #1a365d;
+        }
+        button.secondary {
+            background-color: #718096;
+        }
+        button.secondary:hover {
+            background-color: #4a5568;
+        }
+        .centerline {
+            position: absolute;
+            background-color: #2d3748;
+        }
+        .vertical-line {
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+        }
+        .horizontal-line {
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+        @media print {
+            body {
+                background-color: white;
+                margin: 0;
+                padding: 20px;
+            }
+            .controls {
+                display: none;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Challenge Prioritization Matrix</h1>
+            <div class="subtitle">Business Risk vs. Current Pain Level</div>
+        </div>
+        
+        <div class="instructions">
+            <strong>How to use this tool:</strong> Drag challenge categories from the left onto the matrix. Place them based on:
+            <br><br>
+            <strong>Y-axis (Business Risk):</strong> How much this problem costs you (money, time, customer trust, employee morale)
+            <br>
+            <strong>X-axis (Current Pain Level):</strong> How much this problem is hurting your team right now (frustration, daily friction, operational pain)
+        </div>
+
+        <div class="matrix-container">
+            <div class="chips-container">
+                <div class="chips-header">Challenge Categories</div>
+                <div id="chipsList">
+                    <div class="chip" draggable="true" data-id="1">Alignment & Getting on the Same Page</div>
+                    <div class="chip" draggable="true" data-id="2">Process Breakdowns & Bottlenecks</div>
+                    <div class="chip" draggable="true" data-id="3">Handoffs & Communication Gaps</div>
+                    <div class="chip" draggable="true" data-id="4">People Working Around the System</div>
+                    <div class="chip" draggable="true" data-id="5">Scaling & Growth Pains</div>
+                    <div class="chip" draggable="true" data-id="6">Technology & System Integration</div>
+                    <div class="chip" draggable="true" data-id="7">Priorities & Decision-Making</div>
+                    <div class="chip" draggable="true" data-id="8">Customer or Quality Issues</div>
+                    <div class="chip" draggable="true" data-id="9">New Hire Onboarding</div>
+                    <div class="chip" draggable="true" data-id="10">Unclear Roles & Responsibilities</div>
+                </div>
+            </div>
+
+            <div class="matrix-wrapper">
+                <div class="matrix" id="matrix">
+                    <div class="centerline vertical-line"></div>
+                    <div class="centerline horizontal-line"></div>
+                    
+                    <div class="quadrant-label q1">High Risk / High Pain</div>
+                    <div class="quadrant-label q2">High Risk / Low Pain</div>
+                    <div class="quadrant-label q3">Low Risk / Low Pain</div>
+                    <div class="quadrant-label q4">Low Risk / High Pain</div>
+                    
+                    <div class="axis-label y-axis">Business Risk (Impact)</div>
+                    <div class="axis-label x-axis">Current Pain Level</div>
+                    
+                    <div class="axis-low y-low">Low</div>
+                    <div class="axis-low y-high">High</div>
+                    <div class="axis-low x-low">Low</div>
+                    <div class="axis-low x-high">High</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="resetMatrix()">Reset Matrix</button>
+            <button onclick="savePDF()">Print to PDF</button>
+        </div>
+    </div>
+
+    <script>
+        let draggedElement = null;
+        let placedChips = new Map();
+
+        // Setup drag handlers for chips
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('dragstart', handleDragStart);
+            chip.addEventListener('dragend', handleDragEnd);
+        });
+
+        // Setup drop zone
+        const matrix = document.getElementById('matrix');
+        matrix.addEventListener('dragover', handleDragOver);
+        matrix.addEventListener('drop', handleDrop);
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            e.preventDefault();
+
+            if (draggedElement) {
+                const rect = matrix.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const chipId = draggedElement.getAttribute('data-id');
+                const chipText = draggedElement.textContent;
+
+                // Remove existing chip if it exists
+                if (placedChips.has(chipId)) {
+                    const existingChip = placedChips.get(chipId);
+                    existingChip.remove();
+                }
+
+                // Create new placed chip
+                const placedChip = document.createElement('div');
+                placedChip.className = 'placed-chip';
+                placedChip.textContent = chipText;
+                placedChip.style.left = x + 'px';
+                placedChip.style.top = y + 'px';
+                placedChip.setAttribute('data-id', chipId);
+                
+                // Make it draggable within the matrix
+                placedChip.draggable = true;
+                placedChip.addEventListener('dragstart', function(e) {
+                    draggedElement = this;
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+                placedChip.addEventListener('dragend', function(e) {
+                    draggedElement = null;
+                });
+
+                matrix.appendChild(placedChip);
+                placedChips.set(chipId, placedChip);
+
+                // Hide original chip
+                draggedElement.style.opacity = '0.3';
+                draggedElement.style.pointerEvents = 'none';
+            }
+
+            return false;
+        }
+
+        function resetMatrix() {
+            // Remove all placed chips
+            placedChips.forEach(chip => chip.remove());
+            placedChips.clear();
+
+            // Show all original chips
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.style.opacity = '1';
+                chip.style.pointerEvents = 'auto';
+            });
+        }
+
+        function exportSnapshot() {
+            const matrixRect = matrix.getBoundingClientRect();
+            let snapshot = "Challenge Prioritization Snapshot\n";
+            snapshot += "=" .repeat(50) + "\n\n";
+
+            const positions = [];
+            placedChips.forEach((chip, id) => {
+                const chipRect = chip.getBoundingClientRect();
+                const x = ((chipRect.left + chipRect.width/2 - matrixRect.left) / matrixRect.width * 100).toFixed(1);
+                const y = (100 - (chipRect.top + chipRect.height/2 - matrixRect.top) / matrixRect.height * 100).toFixed(1);
+                
+                let quadrant;
+                if (x > 50 && y > 50) quadrant = "High Risk / High Effort";
+                else if (x <= 50 && y > 50) quadrant = "High Risk / Low Effort (PRIORITY)";
+                else if (x <= 50 && y <= 50) quadrant = "Low Risk / Low Effort";
+                else quadrant = "Low Risk / High Effort";
+
+                positions.push({
+                    name: chip.textContent,
+                    risk: y,
+                    effort: x,
+                    quadrant: quadrant
+                });
+            });
+
+            // Sort by risk (high to low)
+            positions.sort((a, b) => b.risk - a.risk);
+
+            positions.forEach(pos => {
+                snapshot += `${pos.name}\n`;
+                snapshot += `  Risk: ${pos.risk}% | Effort: ${pos.effort}%\n`;
+                snapshot += `  Quadrant: ${pos.quadrant}\n\n`;
+            });
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(snapshot).then(() => {
+                alert('Snapshot copied to clipboard!');
+            }).catch(() => {
+                // Fallback: show in alert
+                alert(snapshot);
+            });
+        }
+
+        function savePDF() {
+            alert('To save as PDF:\n\n1. Press Ctrl+P (Windows) or Cmd+P (Mac)\n2. Select "Save as PDF" as the destination\n3. Click Save\n\nThe filename will include today\'s date and time.');
+        }
+    </script>
+</body>
+</html>
