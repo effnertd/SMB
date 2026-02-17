@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Behavioral Practice Lab — Organizational Skills Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #0e0e0e;
+      --paper: #f5f2eb;
+      --rule: #c8c0b0;
+      --accent: #c1440e;
+      --mid: #6b6355;
+      --light: #e8e4da;
+      --white: #fdfcf9;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--paper);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 48px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .nav-mark {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+
+    .nav-mark strong {
+      color: var(--ink);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-cta {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: var(--ink);
+      padding: 10px 20px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .nav-cta:hover { background: var(--accent); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 80px;
+    }
+
+    .hero-left {
+      padding: 80px 48px 80px 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 1px solid var(--rule);
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 32px;
+    }
+
+    .hero-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(48px, 5vw, 76px);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 40px;
+    }
+
+    .hero-heading em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-body {
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--mid);
+      max-width: 460px;
+      margin-bottom: 48px;
+    }
+
+    .hero-body strong {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: var(--white);
+      padding: 16px 32px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-primary:hover {
+      background: var(--ink);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-decoration: none;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .btn-ghost:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 64px 80px 48px;
+      background: var(--light);
+    }
+
+    .reframe-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 24px;
+    }
+
+    .reframe-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .reframe-item {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--rule);
+      opacity: 0;
+      transform: translateX(-8px);
+      animation: slideIn 0.5s ease forwards;
+    }
+
+    .reframe-item:nth-child(1) { animation-delay: 0.1s; }
+    .reframe-item:nth-child(2) { animation-delay: 0.2s; }
+    .reframe-item:nth-child(3) { animation-delay: 0.3s; }
+    .reframe-item:nth-child(4) { animation-delay: 0.4s; }
+    .reframe-item:nth-child(5) { animation-delay: 0.5s; }
+    .reframe-item:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .reframe-old {
+      font-size: 13px;
+      color: var(--rule);
+      text-decoration: line-through;
+      text-align: right;
+    }
+
+    .reframe-arrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .reframe-new {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    /* STRIP */
+    .strip {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 24px 64px;
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      overflow: hidden;
+    }
+
+    .strip-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .strip-scroll {
+      display: flex;
+      gap: 48px;
+      animation: marquee 30s linear infinite;
+    }
+
+    .strip-item {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--paper);
+    }
+
+    .strip-dot {
+      color: var(--accent);
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* SECTION STRUCTURE */
+    section {
+      padding: 100px 64px;
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 64px;
+      margin-bottom: 72px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      padding-top: 8px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 3vw, 48px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .section-intro {
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--mid);
+      margin-top: 20px;
+    }
+
+    /* PREMISE */
+    #premise {
+      background: var(--white);
+    }
+
+    .premise-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--rule);
+    }
+
+    .premise-cell {
+      background: var(--white);
+      padding: 48px;
+    }
+
+    .premise-cell.accent-bg {
+      background: var(--accent);
+      color: var(--white);
+    }
+
+    .premise-cell.dark-bg {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .premise-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .premise-source {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+
+    .premise-stat {
+      font-family: 'Playfair Display', serif;
+      font-size: 64px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .premise-stat-label {
+      font-size: 14px;
+      line-height: 1.5;
+      opacity: 0.75;
+    }
+
+    /* PROBLEMS */
+    #problems {
+      background: var(--paper);
+    }
+
+    .problems-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: var(--rule);
+    }
+
+    .problem-card {
+      background: var(--white);
+      padding: 36px 28px;
+      transition: background 0.2s;
+      cursor: default;
+    }
+
+    .problem-card:hover {
+      background: var(--light);
+    }
+
+    .problem-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .problem-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+
+    .problem-desc {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.65;
+    }
+
+    /* HOW IT WORKS */
+    #method {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    #method .section-title {
+      color: var(--paper);
+    }
+
+    #method .section-number {
+      color: var(--mid);
+    }
+
+    #method .section-intro {
+      color: #8a8070;
+    }
+
+    .method-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: #2a2820;
+    }
+
+    .method-step {
+      padding: 48px;
+      background: var(--ink);
+      position: relative;
+    }
+
+    .step-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 80px;
+      font-weight: 900;
+      color: #1e1c17;
+      line-height: 1;
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .step-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--paper);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .step-body {
+      font-size: 14px;
+      color: #8a8070;
+      line-height: 1.75;
+    }
+
+    .step-tag {
+      display: inline-block;
+      margin-top: 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 5px 12px;
+    }
+
+    /* SKILLS */
+    #skills {
+      background: var(--light);
+    }
+
+    .skills-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .skills-table thead tr {
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .skills-table th {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mid);
+      padding: 0 24px 16px 0;
+      text-align: left;
+    }
+
+    .skills-table th:last-child { padding-right: 0; }
+
+    .skills-table tbody tr {
+      border-bottom: 1px solid var(--rule);
+      transition: background 0.15s;
+    }
+
+    .skills-table tbody tr:hover {
+      background: rgba(193,68,14,0.04);
+    }
+
+    .skills-table td {
+      padding: 20px 24px 20px 0;
+      vertical-align: top;
+    }
+
+    .skills-table td:last-child { padding-right: 0; }
+
+    .skill-cluster {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .skill-behaviors {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    .skill-transfer {
+      font-size: 13px;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    .skill-badge {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 3px 10px;
+      margin: 2px 3px 2px 0;
+    }
+
+    /* ENGAGEMENT */
+    #engagement {
+      background: var(--white);
+    }
+
+    .engagement-formats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .format-card {
+      border: 1px solid var(--rule);
+      padding: 40px 36px;
+      position: relative;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .format-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .format-card.featured {
+      border-color: var(--accent);
+      background: var(--paper);
+    }
+
+    .format-tag {
+      position: absolute;
+      top: -1px;
+      right: 24px;
+      background: var(--accent);
+      color: var(--white);
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+    }
+
+    .format-duration {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .format-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .format-desc {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .format-includes {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .format-includes li {
+      font-size: 13px;
+      color: var(--ink);
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .format-includes li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 8px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    /* CTA */
+    #contact {
+      background: var(--ink);
+      color: var(--paper);
+      text-align: center;
+      padding: 120px 64px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-bg-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', serif;
+      font-size: 300px;
+      font-weight: 900;
+      color: #161410;
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      line-height: 1;
+    }
+
+    .cta-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .cta-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 28px;
+    }
+
+    .cta-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .cta-heading em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .cta-body {
+      font-size: 16px;
+      color: #8a8070;
+      line-height: 1.75;
+      margin-bottom: 48px;
+    }
+
+    .cta-form {
+      display: flex;
+      gap: 0;
+      max-width: 480px;
+      margin: 0 auto 20px;
+    }
+
+    .cta-input {
+      flex: 1;
+      padding: 16px 20px;
+      background: #1e1c17;
+      border: 1px solid #2a2820;
+      border-right: none;
+      color: var(--paper);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .cta-input::placeholder { color: var(--mid); }
+    .cta-input:focus { border-color: var(--accent); }
+
+    .cta-submit {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: var(--white);
+      border: none;
+      padding: 16px 28px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .cta-submit:hover { background: #a5380b; }
+
+    .cta-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--mid);
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--paper);
+      padding: 40px 64px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-mark {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+
+    .footer-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--rule);
+      letter-spacing: 0.08em;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-left { padding: 60px 32px; border-right: none; border-bottom: 1px solid var(--rule); }
+      .hero-right { padding: 40px 32px; }
+      section { padding: 72px 32px; }
+      .section-header { grid-template-columns: 1fr; gap: 24px; }
+      .premise-grid { grid-template-columns: 1fr; }
+      .problems-grid { grid-template-columns: repeat(2, 1fr); }
+      .method-steps { grid-template-columns: 1fr; }
+      .engagement-formats { grid-template-columns: 1fr; }
+      .skills-table { display: block; overflow-x: auto; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+      .strip { padding: 24px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-mark"><strong>Behavioral Practice</strong> &nbsp;/&nbsp; Organizational Skills</div>
+  <ul class="nav-links">
+    <li><a href="#premise">The Problem</a></li>
+    <li><a href="#problems">Applications</a></li>
+    <li><a href="#method">Method</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#engagement">Formats</a></li>
+  </ul>
+  <a class="nav-cta" href="#contact">Start a Conversation</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Organizational Skills Training</p>
+    <h1 class="hero-heading">Your team knows<br/>what to do.<br/><em>They don't<br/>practice it.</em></h1>
+    <p class="hero-body">
+      Most organizational problems are not information problems. Your people already know that <strong>handoffs need context</strong>, that <strong>decisions need commitment</strong>, and that <strong>alignment requires acknowledgment</strong>. They just don't have the behavioral muscle memory to do it automatically, under pressure, in real time.
+    </p>
+    <p class="hero-body">
+      We use genuinely fun, fast-moving exercises in a low-stakes environment where people laugh, get things wrong, and try again. That environment is not incidental. It is the whole mechanism. People practice new behaviors when it feels safe to be imperfect. The skills that emerge in the room are the same ones they need back at their desks.
+    </p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#problems">See All 10 Applications</a>
+      <a class="btn-ghost" href="#method">How it works</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <p class="reframe-label">What we are &mdash; and what we are not</p>
+    <ul class="reframe-list">
+      <li class="reframe-item">
+        <span class="reframe-old">Improv comedy workshop</span>
+        <span class="reframe-arrow">&rarr;</span>
+        <span class="reframe-new">Behavioral practice lab</span>
+      </li>
+      <li class="reframe-item">
+        <span class="reframe-old">Team-building activity</span>
+        <span class="reframe-arrow">&rarr;</span>
+        <span class="reframe-new">Skills intervention</span>
+      </li>
+      <li class="reframe-item">
+        <span class="reframe-old">Icebreaker exercises</span>
+        <span class="reframe-arrow">&rarr;</span>
+        <span class="reframe-new">Diagnostic sessions</span>
+      </li>
+      <li class="reframe-item">
+        <span class="reframe-old">Fun and morale boost</span>
+        <span class="reframe-arrow">&rarr;</span>
+        <span class="reframe-new">Measurable behavior change</span>
+      </li>
+      <li class="reframe-item">
+        <span class="reframe-old">One-size-fits-all offsite</span>
+        <span class="reframe-arrow">&rarr;</span>
+        <span class="reframe-new">Problem-specific intervention</span>
+      </li>
+      <li class="reframe-item">
+        <span class="reframe-old">Fun despite itself</span>
+        <span class="reframe-arrow">&rarr;</span>
+        <span class="reframe-new">Fun because of it</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- SCROLLING STRIP -->
+<div class="strip">
+  <span class="strip-label">Skills built</span>
+  <div class="strip-scroll">
+    <span class="strip-item">Handoff clarity <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Decision velocity <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Role awareness <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Alignment under pressure <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Mistake recovery <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Observation before interpretation <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Cross-functional trust <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Knowledge transfer <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Conviction with ambiguity <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Intent vs impact gap <span class="strip-dot">&#9679;</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="strip-item">Handoff clarity <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Decision velocity <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Role awareness <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Alignment under pressure <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Mistake recovery <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Observation before interpretation <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Cross-functional trust <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Knowledge transfer <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Conviction with ambiguity <span class="strip-dot">&#9679;</span></span>
+    <span class="strip-item">Intent vs impact gap <span class="strip-dot">&#9679;</span></span>
+  </div>
+</div>
+
+<!-- PREMISE -->
+<section id="premise">
+  <div class="section-header">
+    <div>
+      <p class="section-number">01 &mdash; The Problem</p>
+    </div>
+    <div>
+      <h2 class="section-title">Why training doesn't stick &mdash; and what<br/><em>actually changes behavior</em></h2>
+      <p class="section-intro">Organizations spend enormous amounts on workshops, frameworks, and documentation. The knowledge transfer works. The behavioral change doesn't. That gap is the problem we solve.</p>
+    </div>
+  </div>
+
+  <div class="premise-grid">
+    <div class="premise-cell">
+      <p class="premise-quote">"When people are laughing and moving and getting things slightly wrong in a room together, their guard comes down. That is exactly when new behaviors get practiced and retained. The fun is not a reward for attending. It is how the learning works."</p>
+      <p class="premise-source">Why the environment matters as much as the exercise</p>
+    </div>
+    <div class="premise-cell accent-bg">
+      <p class="premise-stat">10</p>
+      <p class="premise-stat-label">Distinct organizational dysfunction categories, each with a targeted behavioral intervention mapped to specific exercises and measurable outcomes.</p>
+    </div>
+    <div class="premise-cell dark-bg">
+      <p class="premise-stat" style="color: var(--accent);">90</p>
+      <p class="premise-stat-label">Minutes. A single focused session produces observable behavioral shifts that carry into the next week's work. Not because of insight. Because of practice.</p>
+    </div>
+    <div class="premise-cell">
+      <p class="premise-quote">"The exercises aren't the point. The transfer is the point. Every session is built backward from a specific business problem to a specific behavioral practice to a specific skill. Nothing runs without a reason."</p>
+      <p class="premise-source">How sessions are designed</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMS / APPLICATIONS -->
+<section id="problems">
+  <div class="section-header">
+    <div>
+      <p class="section-number">02 &mdash; Applications</p>
+    </div>
+    <div>
+      <h2 class="section-title">Ten problems.<br/><em>Ten targeted interventions.</em></h2>
+      <p class="section-intro">Each session begins with identifying where the breakdown is actually happening. Then we design a session built around exercises that are engaging and energetic, targeted to the specific behavioral skill your team is missing. People leave having genuinely enjoyed the hour. They also leave with a concrete new skill.</p>
+    </div>
+  </div>
+
+  <div class="problems-grid">
+    <div class="problem-card">
+      <span class="problem-number">01</span>
+      <p class="problem-name">Alignment & Getting on the Same Page</p>
+      <p class="problem-desc">Sales promises what ops can't deliver. Leadership disagrees on priorities. Teams duplicate work nobody coordinated. The fix isn't another meeting. It's practicing explicit acknowledgment before contribution.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-number">02</span>
+      <p class="problem-name">Process Breakdowns & Bottlenecks</p>
+      <p class="problem-desc">Simple things take too long. Approvals sit. Requests bounce. The root cause is almost always observation interpreted as action before the facts are actually on the table.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-number">03</span>
+      <p class="problem-name">Handoffs & Communication Gaps</p>
+      <p class="problem-desc">Information gets lost between people and teams. Nobody knows who follows up. The same questions get asked at every step. People don't know how to set up the next person for success.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-number">04</span>
+      <p class="problem-name">People Working Around the System</p>
+      <p class="problem-desc">Separate spreadsheets. Informal phone calls. Skipped steps. Workarounds exist because the official system doesn't match reality. The goal isn't compliance. It's understanding what the workaround is telling you.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-number">05</span>
+      <p class="problem-name">Scaling & Growth Pains</p>
+      <p class="problem-desc">What worked at 10 people breaks at 30. The owner used to hold it all together. Now things slip. The problem is distributing knowledge and decision-making that was never made explicit.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-number">06</span>
+      <p class="problem-name">Technology & System Integration</p>
+      <p class="problem-desc">Data entered in three places. Systems that don't talk. Software nobody uses. Technology problems are almost always workflow problems in disguise. You can't fix the system until you observe the actual workflow.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-number">07</span>
+      <p class="problem-name">Priorities & Decision-Making</p>
+      <p class="problem-desc">Everything feels urgent. Nothing gets finished. Analysis paralysis while the window closes. The skill that's missing isn't better data. It's commitment with incomplete information and fast recovery when wrong.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-number">08</span>
+      <p class="problem-name">Customer or Quality Issues</p>
+      <p class="problem-desc">Recurring complaints that training doesn't fix. Quality that varies by who does the work. The gap between what you think you deliver and what the customer receives is almost always an intent-versus-impact problem.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-number">09</span>
+      <p class="problem-name">New Hire Onboarding</p>
+      <p class="problem-desc">New people taking months to get up to speed. Everything relies on one trainer. Critical knowledge lives in one person's head and never survives the transfer. Tacit knowledge has to be made explicit before it can travel.</p>
+    </div>
+    <div class="problem-card">
+      <span class="problem-number">10</span>
+      <p class="problem-name">Unclear Roles & Responsibilities</p>
+      <p class="problem-desc">Tasks fall through because everyone assumed someone else would handle it. Duplicate work. Ownership battles. The fix isn't an org chart. It's building ambient awareness of whose turn it is and when to step back.</p>
+    </div>
+  </div>
+</section>
+
+<!-- METHOD -->
+<section id="method">
+  <div class="section-header">
+    <div>
+      <p class="section-number">03 &mdash; Method</p>
+    </div>
+    <div>
+      <h2 class="section-title">Built backward from<br/><em>the business problem.</em></h2>
+      <p class="section-intro">Every session is designed in the same order: identify the dysfunction, select exercises that are genuinely fun and fast-moving, practice the specific skill repeatedly in a room where imperfection is safe, then build the transfer plan back to real work. The exercises earn the learning. The debrief makes it stick.</p>
+    </div>
+  </div>
+
+  <div class="method-steps">
+    <div class="method-step">
+      <span class="step-num">1</span>
+      <h3 class="step-heading">Diagnose the actual dysfunction</h3>
+      <p class="step-body">We start with discovery questions that expose where the behavioral breakdown is actually happening, not where leadership thinks it's happening. Most organizations misdiagnose: they describe symptoms as the problem when the behavior causing them is three steps upstream.</p>
+      <span class="step-tag">Pre-session</span>
+    </div>
+    <div class="method-step">
+      <span class="step-num">2</span>
+      <h3 class="step-heading">Practice the missing behavior in a room that makes it feel safe</h3>
+      <p class="step-body">The exercises are fast, energetic, and genuinely fun. People laugh. They get things wrong. They try again without penalty. That environment is the point. New behaviors require psychological safety to take root, and these exercises create it quickly. Participants practice the specific skill your organization is missing, repeatedly, in a context where imperfection is expected and recovery is celebrated.</p>
+      <span class="step-tag">The session</span>
+    </div>
+    <div class="method-step">
+      <span class="step-num">3</span>
+      <h3 class="step-heading">Transfer the skill to a specific real situation</h3>
+      <p class="step-body">Every session ends with a concrete transfer plan: one specific situation in the coming week where the practiced skill applies. Then 1-week, 1-month, and 3-month check-ins that reinforce application and surface the next layer of behavioral work.</p>
+      <span class="step-tag">Post-session</span>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header">
+    <div>
+      <p class="section-number">04 &mdash; Skills Built</p>
+    </div>
+    <div>
+      <h2 class="section-title">Four clusters.<br/><em>Dozens of observable behaviors.</em></h2>
+      <p class="section-intro">Every exercise we use develops skills in one or more of these clusters. The clusters map directly to the categories of organizational dysfunction they address. Nothing is decorative.</p>
+    </div>
+  </div>
+
+  <table class="skills-table">
+    <thead>
+      <tr>
+        <th style="width:18%;">Cluster</th>
+        <th style="width:30%;">Observable behaviors developed</th>
+        <th style="width:32%;">Why this matters in organizations</th>
+        <th style="width:20%;">Problems addressed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="skill-cluster">Trust &amp; Collaboration</span></td>
+        <td class="skill-behaviors">Comfort trusting partner's judgment. Co-creating outcomes without pre-planning. Supporting team members in real time. Working toward shared goals without explicit coordination.</td>
+        <td class="skill-transfer">Organizations fail when people don't trust handoffs, second-guess decisions made without them, or protect individual territory over collective outcomes. This cluster builds the muscle memory of collaboration before intellect.</td>
+        <td>
+          <span class="skill-badge">Handoffs</span>
+          <span class="skill-badge">Alignment</span>
+          <span class="skill-badge">Scaling</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="skill-cluster">Communication Skills</span></td>
+        <td class="skill-behaviors">Speaking without preparation under pressure. Communicating intent without relying on words. Observing actual behavior before interpreting it. Describing data clearly before designing action.</td>
+        <td class="skill-transfer">Most breakdowns stem from the gap between observation and interpretation. People describe the problem they think exists rather than what they actually see happening. These exercises force that discipline.</td>
+        <td>
+          <span class="skill-badge">Process</span>
+          <span class="skill-badge">Quality</span>
+          <span class="skill-badge">Technology</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="skill-cluster">Adaptability</span></td>
+        <td class="skill-behaviors">Recovering from mistakes without dwelling. Accepting new direction mid-stream without resistance. Collaborating in real time as conditions shift. Getting comfortable with being wrong in public.</td>
+        <td class="skill-transfer">Organizations that resist adaptation create workarounds, shadow systems, and process debt. This cluster makes recovery the default response instead of resistance, and makes fast iteration feel normal rather than threatening.</td>
+        <td>
+          <span class="skill-badge">Workarounds</span>
+          <span class="skill-badge">Decisions</span>
+          <span class="skill-badge">Scaling</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="skill-cluster">Self-Awareness</span></td>
+        <td class="skill-behaviors">Separating emotional reaction from professional response. Receiving feedback as data instead of attack. Understanding the gap between intention and impact. Noticing micro-signals from others before they become problems.</td>
+        <td class="skill-transfer">People rarely intend to create dysfunction. But lack of self-awareness about impact creates cascading failures. These exercises surface the gap between what you think you're doing and what others receive, without shame or blame.</td>
+        <td>
+          <span class="skill-badge">Quality</span>
+          <span class="skill-badge">Roles</span>
+          <span class="skill-badge">Onboarding</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ENGAGEMENT FORMATS -->
+<section id="engagement">
+  <div class="section-header">
+    <div>
+      <p class="section-number">05 &mdash; Formats</p>
+    </div>
+    <div>
+      <h2 class="section-title">Three ways to<br/><em>engage.</em></h2>
+      <p class="section-intro">Every format includes pre-session diagnosis, targeted exercise selection, structured debrief, transfer planning, and follow-up reinforcement. The difference is scope and depth.</p>
+    </div>
+  </div>
+
+  <div class="engagement-formats">
+    <div class="format-card">
+      <span class="format-duration">90 Minutes</span>
+      <h3 class="format-name">Single Problem Session</h3>
+      <p class="format-desc">A focused intervention for one specific organizational dysfunction. Ideal for teams that have already identified a clear behavioral problem and want to address it directly.</p>
+      <ul class="format-includes">
+        <li>Pre-session diagnostic call (30 min)</li>
+        <li>One primary exercise, one supporting exercise</li>
+        <li>Structured debrief and transfer planning</li>
+        <li>1-week follow-up check-in</li>
+        <li>Best for groups of 6 to 20</li>
+      </ul>
+    </div>
+    <div class="format-card featured">
+      <span class="format-tag">Most Common</span>
+      <span class="format-duration">Half Day</span>
+      <h3 class="format-name">Multi-Problem Workshop</h3>
+      <p class="format-desc">A deeper session that addresses two to three interconnected dysfunctions. Most organizational problems cluster together, and the most effective interventions address the pattern, not just one symptom.</p>
+      <ul class="format-includes">
+        <li>Pre-session diagnostic interviews (60 min)</li>
+        <li>Foundation, core, and application exercises</li>
+        <li>Cross-dysfunction pattern mapping</li>
+        <li>Individual and team transfer planning</li>
+        <li>1-week and 1-month follow-up</li>
+        <li>Best for groups of 8 to 30</li>
+      </ul>
+    </div>
+    <div class="format-card">
+      <span class="format-duration">3 Months</span>
+      <h3 class="format-name">Sustained Skills Program</h3>
+      <p class="format-desc">A full behavioral change engagement. Three sessions, spaced across a quarter, that build foundation skills and then progressively develop more advanced behaviors as the team integrates what they practiced.</p>
+      <ul class="format-includes">
+        <li>Full organizational diagnosis across all 10 categories</li>
+        <li>Session 1: Foundation skills and safety</li>
+        <li>Session 2: Advanced skills and application</li>
+        <li>Session 3: Integration and organizational embedding</li>
+        <li>Monthly check-ins and measurement</li>
+        <li>Written behavioral change summary</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="contact">
+  <div class="cta-bg-text">Practice</div>
+  <div class="cta-inner">
+    <p class="cta-eyebrow">Start here</p>
+    <h2 class="cta-heading">Tell us what's<br/><em>not working.</em></h2>
+    <p class="cta-body">
+      Every engagement begins with a conversation. You describe what's breaking down. We identify which category it falls into and which behavioral skills are missing. If there's a fit, we design something specific to your situation.
+    </p>
+    <div class="cta-form">
+      <input class="cta-input" type="email" placeholder="Your work email" />
+      <button class="cta-submit">Get in touch</button>
+    </div>
+    <p class="cta-note">No pitch deck. No sales funnel. Just a conversation.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-mark">Behavioral Practice Lab &mdash; Organizational Skills Training</span>
+  <span class="footer-note">Fun in the room. Real skills back at work.</span>
+</footer>
+
+</body>
+</html>
