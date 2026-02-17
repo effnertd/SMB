@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Challenge Prioritization Matrix</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
@@ -211,6 +212,30 @@
             width: 16px;
             height: 16px;
         }
+        .saving-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.4);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .saving-overlay.active {
+            display: flex;
+        }
+        .saving-message {
+            background-color: white;
+            padding: 24px 36px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
         @media print {
             body {
                 background-color: white;
@@ -286,8 +311,12 @@
 
         <div class="controls">
             <button onclick="resetMatrix()">Reset Matrix</button>
-            <button onclick="savePDF()">Print to PDF</button>
+            <button onclick="saveAsImage()">Save as Image</button>
         </div>
+    </div>
+
+    <div class="saving-overlay" id="saving-overlay">
+        <div class="saving-message">Capturing your matrix...</div>
     </div>
 
     <script>
@@ -428,8 +457,47 @@
             });
         }
 
-        function savePDF() {
-            alert('To save as PDF:\n\n1. Press Ctrl+P (Windows) or Cmd+P (Mac)\n2. Select "Save as PDF" as the destination\n3. Click Save\n\nThe filename will include today\'s date and time.');
+        function saveAsImage() {
+            const overlay = document.getElementById('saving-overlay');
+            overlay.classList.add('active');
+
+            // Hide controls and back link for capture
+            const controls = document.querySelector('.controls');
+            const backLink = document.querySelector('.back-link');
+            const chipsContainer = document.querySelector('.chips-container');
+            controls.style.display = 'none';
+            backLink.style.display = 'none';
+
+            const container = document.querySelector('.container');
+
+            setTimeout(function() {
+                html2canvas(container, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                }).then(function(canvas) {
+                    const link = document.createElement('a');
+                    const now = new Date();
+                    const timestamp = now.getFullYear() + '_' +
+                        String(now.getMonth() + 1).padStart(2, '0') + '_' +
+                        String(now.getDate()).padStart(2, '0') + '_' +
+                        String(now.getHours()).padStart(2, '0') +
+                        String(now.getMinutes()).padStart(2, '0');
+                    link.download = timestamp + '_Prioritization_Matrix.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    controls.style.display = '';
+                    backLink.style.display = '';
+                    overlay.classList.remove('active');
+                }).catch(function() {
+                    controls.style.display = '';
+                    backLink.style.display = '';
+                    overlay.classList.remove('active');
+                    alert('There was an issue capturing the image. Please try again.');
+                });
+            }, 100);
         }
     </script>
 </body>

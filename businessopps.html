@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Development Opportunities</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
@@ -48,12 +49,54 @@
             border-radius: 6px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             border-left: 4px solid #028090;
+            position: relative;
+            cursor: pointer;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .category-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .category-card.selected {
+            border-left-color: #028090;
+            box-shadow: 0 0 0 2px #028090, 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .category-card.dimmed {
+            opacity: 0.4;
+        }
+        .card-checkbox {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #cbd5e0;
+            border-radius: 4px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .category-card.selected .card-checkbox {
+            background-color: #028090;
+            border-color: #028090;
+        }
+        .card-checkbox svg {
+            width: 14px;
+            height: 14px;
+            color: white;
+            display: none;
+        }
+        .category-card.selected .card-checkbox svg {
+            display: block;
         }
         .category-title {
             font-size: 15px;
             color: #1a365d;
             font-weight: 700;
             margin-bottom: 10px;
+            padding-right: 36px;
         }
         .prompt {
             font-size: 14px;
@@ -85,7 +128,7 @@
             line-height: 1.4;
         }
         .examples li:before {
-            content: "•";
+            content: "\2022";
             position: absolute;
             left: 4px;
             color: #028090;
@@ -108,12 +151,85 @@
             width: 16px;
             height: 16px;
         }
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .selection-count {
+            font-size: 14px;
+            color: #4a5568;
+        }
+        .selection-count strong {
+            color: #028090;
+        }
+        .controls-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        button.primary {
+            background-color: #028090;
+            color: white;
+        }
+        button.primary:hover {
+            background-color: #026670;
+        }
+        button.primary:disabled {
+            background-color: #a0c4c9;
+            cursor: not-allowed;
+        }
+        button.secondary {
+            background-color: #edf2f7;
+            color: #4a5568;
+        }
+        button.secondary:hover {
+            background-color: #e2e8f0;
+        }
+        .saving-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.4);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .saving-overlay.active {
+            display: flex;
+        }
+        .saving-message {
+            background-color: white;
+            padding: 24px 36px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
         @media print {
             body {
                 background-color: white;
             }
             .category-card {
                 page-break-inside: avoid;
+            }
+            .controls, .back-link, .card-checkbox {
+                display: none;
             }
         }
     </style>
@@ -124,133 +240,300 @@
         Back to Toolkit
     </a>
 
-    <div class="header">
-        <h1>Business Development Opportunities</h1>
-        <div class="subtitle">Choose a starting point that feels relevant</div>
-    </div>
-    
-    <div class="intro">
-        <p><strong>For the participant:</strong> Pick one or more topics below that resonate with challenges in your business. These prompts will help us explore what's actually happening in your organization.</p>
+    <div id="capture-area">
+        <div class="header">
+            <h1>Business Development Opportunities</h1>
+            <div class="subtitle">Choose a starting point that feels relevant</div>
+        </div>
+        
+        <div class="intro">
+            <p><strong>For the participant:</strong> Pick one or more topics below that resonate with challenges in your business. These prompts will help us explore what's actually happening in your organization.</p>
+        </div>
+
+        <div class="controls" id="controls-bar">
+            <div class="selection-count" id="selection-count">
+                <strong>0</strong> of 10 selected
+            </div>
+            <div class="controls-buttons">
+                <button class="secondary" onclick="selectAll()">Select All</button>
+                <button class="secondary" onclick="clearSelection()">Clear</button>
+                <button class="primary" id="save-btn" onclick="saveSelected()" disabled>Save Selected</button>
+            </div>
+        </div>
+
+        <div id="cards-container">
+            <div class="category-card" onclick="toggleCard(this)">
+                <div class="card-checkbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="category-title">Alignment & Getting on the Same Page</div>
+                <div class="prompt">Tell me about a time when different people or departments couldn't agree on what to do, or when everyone seemed to be working toward different goals.</div>
+                <div class="examples-header">For example:</div>
+                <ul class="examples">
+                    <li>Sales promises things operations can't deliver</li>
+                    <li>Leadership team can't agree on what to prioritize this quarter</li>
+                    <li>Different managers giving employees conflicting direction</li>
+                    <li>Teams working on duplicate efforts because nobody's coordinating</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="toggleCard(this)">
+                <div class="card-checkbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="category-title">Process Breakdowns & Bottlenecks</div>
+                <div class="prompt">Walk me through something that should be simple in your business but somehow always gets complicated or takes way longer than it should.</div>
+                <div class="examples-header">For example:</div>
+                <ul class="examples">
+                    <li>Orders that sit waiting for approval for days</li>
+                    <li>Customer requests that bounce between three different people</li>
+                    <li>Reports that take hours to compile manually</li>
+                    <li>Simple tasks that require way too many steps</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="toggleCard(this)">
+                <div class="card-checkbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="category-title">Handoffs & Communication Gaps</div>
+                <div class="prompt">Describe a situation where work moves from one person or team to another, and something regularly gets lost, forgotten, or done wrong in that handoff.</div>
+                <div class="examples-header">For example:</div>
+                <ul class="examples">
+                    <li>Information gets lost when sales hands off to delivery</li>
+                    <li>Customer requests fall through the cracks between departments</li>
+                    <li>Nobody knows who's supposed to follow up</li>
+                    <li>The same questions get asked over and over at each step</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="toggleCard(this)">
+                <div class="card-checkbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="category-title">People Working Around the System</div>
+                <div class="prompt">Tell me about a workaround your team has created - something they do differently than the "official" way because the official way doesn't work.</div>
+                <div class="examples-header">For example:</div>
+                <ul class="examples">
+                    <li>Keeping separate spreadsheets because the software doesn't do what you need</li>
+                    <li>Informal phone calls to get things done faster than the official process</li>
+                    <li>Skipping steps that slow things down but don't add value</li>
+                    <li>Personal systems people use because the company system is broken</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="toggleCard(this)">
+                <div class="card-checkbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="category-title">Scaling & Growth Pains</div>
+                <div class="prompt">Describe something that worked fine when you were smaller but is now causing problems as you've grown.</div>
+                <div class="examples-header">For example:</div>
+                <ul class="examples">
+                    <li>The owner used to handle everything, now things slip through the cracks</li>
+                    <li>Everyone used to just know what to do, now new people are lost</li>
+                    <li>Systems that worked for 10 people are breaking down at 30</li>
+                    <li>Quality control that was informal is now inconsistent</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="toggleCard(this)">
+                <div class="card-checkbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="category-title">Technology & System Integration</div>
+                <div class="prompt">Tell me about software or systems you're using that don't talk to each other the way you need them to, or that create more work than they save.</div>
+                <div class="examples-header">For example:</div>
+                <ul class="examples">
+                    <li>Entering the same information in three different places</li>
+                    <li>Data that doesn't sync between systems</li>
+                    <li>New software that nobody actually uses because it's too complicated</li>
+                    <li>Reports that require manual data compilation from multiple sources</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="toggleCard(this)">
+                <div class="card-checkbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="category-title">Priorities & Decision-Making</div>
+                <div class="prompt">Walk me through a time when you had multiple problems or opportunities and struggled to figure out which one to tackle first.</div>
+                <div class="examples-header">For example:</div>
+                <ul class="examples">
+                    <li>Everything feels urgent, nothing gets finished</li>
+                    <li>Not sure if you should invest in people, processes, or technology</li>
+                    <li>Different stakeholders pushing for different priorities</li>
+                    <li>Knowing something needs to change but not knowing where to start</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="toggleCard(this)">
+                <div class="card-checkbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="category-title">Customer or Quality Issues</div>
+                <div class="prompt">Describe a recurring complaint or quality problem where you're not sure if it's a training issue, a process issue, or something else.</div>
+                <div class="examples-header">For example:</div>
+                <ul class="examples">
+                    <li>Customers complaining about the same thing over and over</li>
+                    <li>Quality inconsistencies depending on who does the work</li>
+                    <li>Mistakes that happen even though people know better</li>
+                    <li>Service issues that training doesn't seem to fix</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="toggleCard(this)">
+                <div class="card-checkbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="category-title">New Hire Onboarding</div>
+                <div class="prompt">Tell me about what happens when someone new joins - what do they struggle to learn, and what takes longer than it should for them to be productive?</div>
+                <div class="examples-header">For example:</div>
+                <ul class="examples">
+                    <li>New people asking the same questions because nothing's written down</li>
+                    <li>Taking months to learn things that should take weeks</li>
+                    <li>Heavy reliance on one person to train everyone</li>
+                    <li>New hires not knowing who to ask for what</li>
+                </ul>
+            </div>
+
+            <div class="category-card" onclick="toggleCard(this)">
+                <div class="card-checkbox">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="category-title">Unclear Roles & Responsibilities</div>
+                <div class="prompt">Describe a situation where it's not clear who's supposed to do something, or where multiple people think they're in charge of the same thing.</div>
+                <div class="examples-header">For example:</div>
+                <ul class="examples">
+                    <li>Tasks falling through the cracks because everyone assumes someone else will do it</li>
+                    <li>Duplicate work because people don't know others are handling it</li>
+                    <li>Conflicts over who has decision-making authority</li>
+                    <li>Confusion about who owns which customer relationships</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
-    <div class="category-card">
-        <div class="category-title">Alignment & Getting on the Same Page</div>
-        <div class="prompt">Tell me about a time when different people or departments couldn't agree on what to do, or when everyone seemed to be working toward different goals.</div>
-        <div class="examples-header">For example:</div>
-        <ul class="examples">
-            <li>Sales promises things operations can't deliver</li>
-            <li>Leadership team can't agree on what to prioritize this quarter</li>
-            <li>Different managers giving employees conflicting direction</li>
-            <li>Teams working on duplicate efforts because nobody's coordinating</li>
-        </ul>
+    <div class="saving-overlay" id="saving-overlay">
+        <div class="saving-message">Capturing your selection...</div>
     </div>
 
-    <div class="category-card">
-        <div class="category-title">Process Breakdowns & Bottlenecks</div>
-        <div class="prompt">Walk me through something that should be simple in your business but somehow always gets complicated or takes way longer than it should.</div>
-        <div class="examples-header">For example:</div>
-        <ul class="examples">
-            <li>Orders that sit waiting for approval for days</li>
-            <li>Customer requests that bounce between three different people</li>
-            <li>Reports that take hours to compile manually</li>
-            <li>Simple tasks that require way too many steps</li>
-        </ul>
-    </div>
+    <script>
+        function toggleCard(card) {
+            card.classList.toggle('selected');
+            updateSelectionState();
+        }
 
-    <div class="category-card">
-        <div class="category-title">Handoffs & Communication Gaps</div>
-        <div class="prompt">Describe a situation where work moves from one person or team to another, and something regularly gets lost, forgotten, or done wrong in that handoff.</div>
-        <div class="examples-header">For example:</div>
-        <ul class="examples">
-            <li>Information gets lost when sales hands off to delivery</li>
-            <li>Customer requests fall through the cracks between departments</li>
-            <li>Nobody knows who's supposed to follow up</li>
-            <li>The same questions get asked over and over at each step</li>
-        </ul>
-    </div>
+        function updateSelectionState() {
+            const cards = document.querySelectorAll('.category-card');
+            const selectedCards = document.querySelectorAll('.category-card.selected');
+            const count = selectedCards.length;
 
-    <div class="category-card">
-        <div class="category-title">People Working Around the System</div>
-        <div class="prompt">Tell me about a workaround your team has created - something they do differently than the "official" way because the official way doesn't work.</div>
-        <div class="examples-header">For example:</div>
-        <ul class="examples">
-            <li>Keeping separate spreadsheets because the software doesn't do what you need</li>
-            <li>Informal phone calls to get things done faster than the official process</li>
-            <li>Skipping steps that slow things down but don't add value</li>
-            <li>Personal systems people use because the company system is broken</li>
-        </ul>
-    </div>
+            document.getElementById('selection-count').innerHTML = 
+                '<strong>' + count + '</strong> of ' + cards.length + ' selected';
 
-    <div class="category-card">
-        <div class="category-title">Scaling & Growth Pains</div>
-        <div class="prompt">Describe something that worked fine when you were smaller but is now causing problems as you've grown.</div>
-        <div class="examples-header">For example:</div>
-        <ul class="examples">
-            <li>The owner used to handle everything, now things slip through the cracks</li>
-            <li>Everyone used to just know what to do, now new people are lost</li>
-            <li>Systems that worked for 10 people are breaking down at 30</li>
-            <li>Quality control that was informal is now inconsistent</li>
-        </ul>
-    </div>
+            document.getElementById('save-btn').disabled = count === 0;
 
-    <div class="category-card">
-        <div class="category-title">Technology & System Integration</div>
-        <div class="prompt">Tell me about software or systems you're using that don't talk to each other the way you need them to, or that create more work than they save.</div>
-        <div class="examples-header">For example:</div>
-        <ul class="examples">
-            <li>Entering the same information in three different places</li>
-            <li>Data that doesn't sync between systems</li>
-            <li>New software that nobody actually uses because it's too complicated</li>
-            <li>Reports that require manual data compilation from multiple sources</li>
-        </ul>
-    </div>
+            // Dim unselected cards when at least one is selected
+            cards.forEach(function(card) {
+                if (count > 0 && !card.classList.contains('selected')) {
+                    card.classList.add('dimmed');
+                } else {
+                    card.classList.remove('dimmed');
+                }
+            });
+        }
 
-    <div class="category-card">
-        <div class="category-title">Priorities & Decision-Making</div>
-        <div class="prompt">Walk me through a time when you had multiple problems or opportunities and struggled to figure out which one to tackle first.</div>
-        <div class="examples-header">For example:</div>
-        <ul class="examples">
-            <li>Everything feels urgent, nothing gets finished</li>
-            <li>Not sure if you should invest in people, processes, or technology</li>
-            <li>Different stakeholders pushing for different priorities</li>
-            <li>Knowing something needs to change but not knowing where to start</li>
-        </ul>
-    </div>
+        function selectAll() {
+            document.querySelectorAll('.category-card').forEach(function(card) {
+                card.classList.add('selected');
+            });
+            updateSelectionState();
+        }
 
-    <div class="category-card">
-        <div class="category-title">Customer or Quality Issues</div>
-        <div class="prompt">Describe a recurring complaint or quality problem where you're not sure if it's a training issue, a process issue, or something else.</div>
-        <div class="examples-header">For example:</div>
-        <ul class="examples">
-            <li>Customers complaining about the same thing over and over</li>
-            <li>Quality inconsistencies depending on who does the work</li>
-            <li>Mistakes that happen even though people know better</li>
-            <li>Service issues that training doesn't seem to fix</li>
-        </ul>
-    </div>
+        function clearSelection() {
+            document.querySelectorAll('.category-card').forEach(function(card) {
+                card.classList.remove('selected');
+                card.classList.remove('dimmed');
+            });
+            updateSelectionState();
+        }
 
-    <div class="category-card">
-        <div class="category-title">New Hire Onboarding</div>
-        <div class="prompt">Tell me about what happens when someone new joins - what do they struggle to learn, and what takes longer than it should for them to be productive?</div>
-        <div class="examples-header">For example:</div>
-        <ul class="examples">
-            <li>New people asking the same questions because nothing's written down</li>
-            <li>Taking months to learn things that should take weeks</li>
-            <li>Heavy reliance on one person to train everyone</li>
-            <li>New hires not knowing who to ask for what</li>
-        </ul>
-    </div>
+        function saveSelected() {
+            var selectedCards = document.querySelectorAll('.category-card.selected');
+            if (selectedCards.length === 0) return;
 
-    <div class="category-card">
-        <div class="category-title">Unclear Roles & Responsibilities</div>
-        <div class="prompt">Describe a situation where it's not clear who's supposed to do something, or where multiple people think they're in charge of the same thing.</div>
-        <div class="examples-header">For example:</div>
-        <ul class="examples">
-            <li>Tasks falling through the cracks because everyone assumes someone else will do it</li>
-            <li>Duplicate work because people don't know others are handling it</li>
-            <li>Conflicts over who has decision-making authority</li>
-            <li>Confusion about who owns which customer relationships</li>
-        </ul>
-    </div>
+            var overlay = document.getElementById('saving-overlay');
+            overlay.classList.add('active');
+
+            // Temporarily hide unselected cards, controls, back link, and checkboxes for capture
+            var allCards = document.querySelectorAll('.category-card');
+            var hiddenCards = [];
+            allCards.forEach(function(card) {
+                if (!card.classList.contains('selected')) {
+                    card.style.display = 'none';
+                    hiddenCards.push(card);
+                } else {
+                    card.classList.remove('dimmed');
+                }
+            });
+
+            var controlsBar = document.getElementById('controls-bar');
+            controlsBar.style.display = 'none';
+
+            var backLink = document.querySelector('.back-link');
+            backLink.style.display = 'none';
+
+            // Hide checkboxes during capture
+            var checkboxes = document.querySelectorAll('.card-checkbox');
+            checkboxes.forEach(function(cb) { cb.style.display = 'none'; });
+
+            // Remove selected outline for cleaner capture
+            selectedCards.forEach(function(card) { card.classList.remove('selected'); });
+
+            var captureArea = document.getElementById('capture-area');
+
+            // Small delay to let DOM settle
+            setTimeout(function() {
+                html2canvas(captureArea, {
+                    backgroundColor: '#f7fafc',
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                }).then(function(canvas) {
+                    // Download the image
+                    var link = document.createElement('a');
+                    var now = new Date();
+                    var timestamp = now.getFullYear() + '_' +
+                        String(now.getMonth() + 1).padStart(2, '0') + '_' +
+                        String(now.getDate()).padStart(2, '0') + '_' +
+                        String(now.getHours()).padStart(2, '0') +
+                        String(now.getMinutes()).padStart(2, '0');
+                    link.download = timestamp + '_Business_Opportunities.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    // Restore everything
+                    hiddenCards.forEach(function(card) { card.style.display = ''; });
+                    controlsBar.style.display = '';
+                    backLink.style.display = '';
+                    checkboxes.forEach(function(cb) { cb.style.display = ''; });
+                    selectedCards.forEach(function(card) { card.classList.add('selected'); });
+                    updateSelectionState();
+                    overlay.classList.remove('active');
+                }).catch(function() {
+                    // Restore on error too
+                    hiddenCards.forEach(function(card) { card.style.display = ''; });
+                    controlsBar.style.display = '';
+                    backLink.style.display = '';
+                    checkboxes.forEach(function(cb) { cb.style.display = ''; });
+                    selectedCards.forEach(function(card) { card.classList.add('selected'); });
+                    updateSelectionState();
+                    overlay.classList.remove('active');
+                    alert('There was an issue capturing the image. Please try again.');
+                });
+            }, 100);
+        }
+    </script>
 </body>
 </html>
