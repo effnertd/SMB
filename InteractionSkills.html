@@ -199,54 +199,80 @@
       margin-bottom: 24px;
     }
 
-    .reframe-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
+    .reframe-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 0;
     }
 
+    .reframe-col-header {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0 0 14px 0;
+      border-bottom: 2px solid var(--rule);
+      margin-bottom: 0;
+    }
+
+    .reframe-col-header.col-not { color: var(--mid); }
+    .reframe-col-header.col-is {
+      color: var(--accent);
+      padding-left: 24px;
+      border-bottom-color: var(--accent);
+    }
+
+    .reframe-list {
+      list-style: none;
+      display: contents;
+    }
+
     .reframe-item {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      gap: 16px;
-      padding: 20px 0;
-      border-bottom: 1px solid var(--rule);
+      display: contents;
       opacity: 0;
-      transform: translateX(-8px);
       animation: slideIn 0.5s ease forwards;
     }
 
-    .reframe-item:nth-child(1) { animation-delay: 0.1s; }
-    .reframe-item:nth-child(2) { animation-delay: 0.2s; }
-    .reframe-item:nth-child(3) { animation-delay: 0.3s; }
-    .reframe-item:nth-child(4) { animation-delay: 0.4s; }
-    .reframe-item:nth-child(5) { animation-delay: 0.5s; }
-    .reframe-item:nth-child(6) { animation-delay: 0.6s; }
+    .reframe-item:nth-child(1) .reframe-old,
+    .reframe-item:nth-child(1) .reframe-new { animation-delay: 0.1s; }
+    .reframe-item:nth-child(2) .reframe-old,
+    .reframe-item:nth-child(2) .reframe-new { animation-delay: 0.2s; }
+    .reframe-item:nth-child(3) .reframe-old,
+    .reframe-item:nth-child(3) .reframe-new { animation-delay: 0.3s; }
+    .reframe-item:nth-child(4) .reframe-old,
+    .reframe-item:nth-child(4) .reframe-new { animation-delay: 0.4s; }
+    .reframe-item:nth-child(5) .reframe-old,
+    .reframe-item:nth-child(5) .reframe-new { animation-delay: 0.5s; }
+    .reframe-item:nth-child(6) .reframe-old,
+    .reframe-item:nth-child(6) .reframe-new { animation-delay: 0.6s; }
 
     @keyframes slideIn {
       to { opacity: 1; transform: translateX(0); }
     }
 
     .reframe-old {
-      font-size: 13px;
-      color: var(--rule);
-      text-decoration: line-through;
-      text-align: right;
-    }
-
-    .reframe-arrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: var(--accent);
-      flex-shrink: 0;
+      font-size: 14px;
+      color: var(--mid);
+      padding: 18px 24px 18px 0;
+      border-bottom: 1px solid var(--rule);
+      opacity: 0;
+      animation: slideIn 0.5s ease forwards;
+      display: flex;
+      align-items: center;
     }
 
     .reframe-new {
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--ink);
+      padding: 18px 0 18px 24px;
+      border-bottom: 1px solid var(--rule);
+      border-left: 2px solid var(--accent);
+      opacity: 0;
+      animation: slideIn 0.5s ease forwards;
+      display: flex;
+      align-items: center;
+      background: rgba(193,68,14,0.03);
     }
 
     /* STRIP */
@@ -854,38 +880,36 @@
   </div>
   <div class="hero-right">
     <p class="reframe-label">What we are &mdash; and what we are not</p>
-    <ul class="reframe-list">
-      <li class="reframe-item">
-        <span class="reframe-old">Improv comedy workshop</span>
-        <span class="reframe-arrow">&rarr;</span>
-        <span class="reframe-new">Behavioral practice lab</span>
-      </li>
-      <li class="reframe-item">
-        <span class="reframe-old">Team-building activity</span>
-        <span class="reframe-arrow">&rarr;</span>
-        <span class="reframe-new">Skills intervention</span>
-      </li>
-      <li class="reframe-item">
-        <span class="reframe-old">Icebreaker exercises</span>
-        <span class="reframe-arrow">&rarr;</span>
-        <span class="reframe-new">Diagnostic sessions</span>
-      </li>
-      <li class="reframe-item">
-        <span class="reframe-old">Fun and morale boost</span>
-        <span class="reframe-arrow">&rarr;</span>
-        <span class="reframe-new">Measurable behavior change</span>
-      </li>
-      <li class="reframe-item">
-        <span class="reframe-old">One-size-fits-all offsite</span>
-        <span class="reframe-arrow">&rarr;</span>
-        <span class="reframe-new">Problem-specific intervention</span>
-      </li>
-      <li class="reframe-item">
-        <span class="reframe-old">Fun despite itself</span>
-        <span class="reframe-arrow">&rarr;</span>
-        <span class="reframe-new">Fun because of it</span>
-      </li>
-    </ul>
+    <div class="reframe-columns">
+      <div class="reframe-col-header col-not">People call it</div>
+      <div class="reframe-col-header col-is">We call it</div>
+      <ul class="reframe-list">
+        <li class="reframe-item">
+          <span class="reframe-old">Improv comedy workshop</span>
+          <span class="reframe-new">Behavioral practice lab</span>
+        </li>
+        <li class="reframe-item">
+          <span class="reframe-old">Team-building activity</span>
+          <span class="reframe-new">Skills intervention</span>
+        </li>
+        <li class="reframe-item">
+          <span class="reframe-old">Icebreaker exercises</span>
+          <span class="reframe-new">Diagnostic sessions</span>
+        </li>
+        <li class="reframe-item">
+          <span class="reframe-old">Fun and morale boost</span>
+          <span class="reframe-new">Fun because it works</span>
+        </li>
+        <li class="reframe-item">
+          <span class="reframe-old">One-size-fits-all offsite</span>
+          <span class="reframe-new">Problem-specific intervention</span>
+        </li>
+        <li class="reframe-item">
+          <span class="reframe-old">Games for adults</span>
+          <span class="reframe-new">Learned skills that transfer</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </section>
 
