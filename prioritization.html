@@ -194,13 +194,30 @@
             right: 0;
             height: 2px;
         }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2b6cb0;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+        .back-link:hover {
+            color: #1a4d80;
+        }
+        .back-link svg {
+            width: 16px;
+            height: 16px;
+        }
         @media print {
             body {
                 background-color: white;
                 margin: 0;
                 padding: 20px;
             }
-            .controls {
+            .controls, .back-link {
                 display: none;
             }
             .container {
@@ -210,6 +227,11 @@
     </style>
 </head>
 <body>
+    <a href="index.html" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        Back to Toolkit
+    </a>
+
     <div class="container">
         <div class="header">
             <h1>Challenge Prioritization Matrix</h1>
