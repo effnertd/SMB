@@ -54,9 +54,15 @@
             font-size: 12px;
             font-weight: 600;
             color: #4a7fa8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-step:hover {
+            color: white;
         }
         .nav-step.active {
             color: white;
+            cursor: default;
         }
         .nav-step-dot {
             width: 8px;
@@ -312,7 +318,7 @@
             cursor: default;
             text-decoration: none;
         }
-        .pdf-btn {
+        .next-btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -326,15 +332,12 @@
             font-weight: 600;
             transition: background-color 0.2s;
             white-space: nowrap;
+            text-decoration: none;
         }
-        .pdf-btn:hover {
+        .next-btn:hover {
             background-color: #1a4d80;
         }
-        .pdf-btn:disabled {
-            background-color: #a0aec0;
-            cursor: not-allowed;
-        }
-        .pdf-btn svg {
+        .next-btn svg {
             width: 15px;
             height: 15px;
         }
@@ -409,20 +412,25 @@
             SMB Business Needs
         </a>
         <div class="site-nav-steps">
-            <div class="nav-step">
+            <a href="businessopps.html" class="nav-step">
                 <div class="nav-step-dot"></div>
                 Discover
-            </div>
+            </a>
             <span class="nav-arrow">&rarr;</span>
-            <div class="nav-step">
+            <a href="prioritization.html" class="nav-step">
                 <div class="nav-step-dot"></div>
                 Prioritize
-            </div>
+            </a>
             <span class="nav-arrow">&rarr;</span>
             <div class="nav-step active">
                 <div class="nav-step-dot"></div>
                 Map
             </div>
+            <span class="nav-arrow">&rarr;</span>
+            <a href="results.html" class="nav-step">
+                <div class="nav-step-dot"></div>
+                Results
+            </a>
         </div>
     </nav>
 
@@ -480,10 +488,11 @@
         <div class="action-bar-left">
             <div class="selection-count" id="selectionCount"><span>0</span> intersections marked</div>
             <button class="clear-btn" id="clearBtn" onclick="clearAll()" disabled>Clear all</button>
+            <button class="clear-btn" id="pdfBtn" onclick="takeSnapshot()" disabled>Save as PDF</button>
         </div>
-        <button class="pdf-btn" id="pdfBtn" onclick="takeSnapshot()" disabled>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-            Save as PDF
+        <button class="next-btn" id="nextBtn" onclick="goNext()">
+            View My Results
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </button>
     </div>
 
@@ -501,6 +510,16 @@
             { id: 10, short: "Roles", full: "Unclear Roles & Responsibilities" }
         ];
 
+        // ── Read step 1 selections (graceful fallback: all 10 if none) ──
+        const smbSelected = (function() {
+            try {
+                const raw = localStorage.getItem('smb_selected');
+                if (raw) { const ids = JSON.parse(raw); if (Array.isArray(ids) && ids.length >= 2) return ids.map(Number); }
+            } catch(e) {}
+            return null;
+        })();
+        const activeCategories = smbSelected ? categories.filter(c => smbSelected.includes(c.id)) : categories;
+
         const activeCells = new Set();
         const countEl = document.getElementById('selectionCount');
         const clearBtn = document.getElementById('clearBtn');
@@ -515,30 +534,32 @@
 
         function generateGrid() {
             const grid = document.getElementById('challengeGrid');
-            
+            const n = activeCategories.length;
+            grid.style.gridTemplateColumns = `200px repeat(${n}, 80px)`;
+
             // Corner cell
             grid.appendChild(createCell('corner-cell'));
-            
+
             // Column headers
-            categories.forEach(cat => {
+            activeCategories.forEach(cat => {
                 const cell = createCell('header-cell');
                 cell.textContent = cat.short;
                 cell.title = cat.full;
                 grid.appendChild(cell);
             });
-            
+
             // Rows
-            categories.forEach((rowCat, rowIdx) => {
+            activeCategories.forEach((rowCat, rowIdx) => {
                 // Row header
                 const rowHeader = createCell('row-header');
                 rowHeader.textContent = rowCat.short;
                 rowHeader.title = rowCat.full;
                 grid.appendChild(rowHeader);
-                
+
                 // Intersection cells
-                categories.forEach((colCat, colIdx) => {
+                activeCategories.forEach((colCat, colIdx) => {
                     const cell = createCell('intersection-cell');
-                    
+
                     // Gray out diagonal (same category)
                     if (rowIdx === colIdx) {
                         cell.classList.add('diagonal-cell');
@@ -548,15 +569,15 @@
                         cell.setAttribute('data-cell-id', cellId);
                         cell.setAttribute('data-row', rowCat.short);
                         cell.setAttribute('data-col', colCat.short);
-                        
+
                         const lightning = document.createElement('span');
                         lightning.className = 'lightning';
                         lightning.textContent = '⚡';
                         cell.appendChild(lightning);
-                        
+
                         cell.addEventListener('click', () => toggleCell(cellId, cell));
                     }
-                    
+
                     grid.appendChild(cell);
                 });
             });
@@ -584,7 +605,13 @@
             document.querySelectorAll('.intersection-cell.active').forEach(cell => {
                 cell.classList.remove('active');
             });
+            localStorage.removeItem('smb_intersections');
             updateBar();
+        }
+
+        function goNext() {
+            localStorage.setItem('smb_intersections', JSON.stringify(Array.from(activeCells)));
+            window.location.href = 'results.html';
         }
 
         function exportData() {

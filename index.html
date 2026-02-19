@@ -93,6 +93,9 @@
         .accent-blue {
             background-color: #2b6cb0;
         }
+        .accent-navy {
+            background-color: #1a365d;
+        }
         .tool-card-body {
             padding: 28px 28px 24px;
             flex: 1;
@@ -122,6 +125,10 @@
         .step-blue {
             background-color: #ebf4ff;
             color: #2b6cb0;
+        }
+        .step-navy {
+            background-color: #e8edf5;
+            color: #1a365d;
         }
         .tool-card-title {
             font-size: 18px;
@@ -191,6 +198,13 @@
         }
         .link-blue:hover {
             background-color: #1a4d80;
+        }
+        .link-navy {
+            background-color: #1a365d;
+            color: white;
+        }
+        .link-navy:hover {
+            background-color: #2a4a7a;
         }
         .tool-card-link svg {
             width: 16px;
@@ -296,11 +310,16 @@
                 <div class="workflow-dot" style="background-color: #2b6cb0;"></div>
                 Map
             </div>
+            <span class="workflow-arrow">&rarr;</span>
+            <div class="workflow-step">
+                <div class="workflow-dot" style="background-color: #1a365d;"></div>
+                Results
+            </div>
         </div>
 
         <div class="section-label">The Toolkit</div>
-        <div class="section-heading">Three steps from conversation to action</div>
-        <div class="section-desc">Each tool builds on the last. Start by uncovering real challenges, then prioritize what matters most, and finally map where they compound each other.</div>
+        <div class="section-heading">Four steps from conversation to action</div>
+        <div class="section-desc">Each tool builds on the last. Start by uncovering real challenges, prioritize what matters most, map where they compound each other, then review your full summary.</div>
 
         <div class="tools-grid">
 
@@ -356,12 +375,33 @@
                         An interactive grid to map where different challenges overlap. When problems compound each other, this tool reveals where the real pain concentrates.
                     </div>
                     <ul class="tool-card-highlights">
-                        <li>10x10 matrix of all challenge categories</li>
+                        <li>Grid built from your selected challenge areas</li>
                         <li>Click to mark high-pain intersection points</li>
                         <li>Export or print your intersection map</li>
                     </ul>
                     <a href="intersection.html" class="tool-card-link link-blue">
                         Map Intersections
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tool 4: Results Summary -->
+            <div class="tool-card">
+                <div class="tool-card-accent accent-navy"></div>
+                <div class="tool-card-body">
+                    <div class="tool-step step-navy">4</div>
+                    <div class="tool-card-title">Review Your Business Needs Summary</div>
+                    <div class="tool-card-desc">
+                        A consolidated view of everything you've uncovered across all three steps — your challenges, priorities, and key intersections — ready to save as a PDF.
+                    </div>
+                    <ul class="tool-card-highlights">
+                        <li>All three steps summarized in one place</li>
+                        <li>Priority matrix showing where challenges landed</li>
+                        <li>Full report export as a print-ready PDF</li>
+                    </ul>
+                    <a href="results.html" class="tool-card-link link-navy">
+                        View Summary
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                     </a>
                 </div>

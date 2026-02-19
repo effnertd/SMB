@@ -54,9 +54,15 @@
             font-size: 12px;
             font-weight: 600;
             color: #4a7fa8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-step:hover {
+            color: white;
         }
         .nav-step.active {
             color: white;
+            cursor: default;
         }
         .nav-step-dot {
             width: 8px;
@@ -290,7 +296,13 @@
             cursor: default;
             text-decoration: none;
         }
-        .pdf-btn {
+        .next-btn-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+        .next-btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -304,17 +316,28 @@
             font-weight: 600;
             transition: background-color 0.2s;
             white-space: nowrap;
+            text-decoration: none;
         }
-        .pdf-btn:hover {
+        .next-btn:hover:not(:disabled) {
             background-color: #026670;
         }
-        .pdf-btn:disabled {
+        .next-btn:disabled {
             background-color: #a0aec0;
             cursor: not-allowed;
         }
-        .pdf-btn svg {
+        .next-btn svg {
             width: 15px;
             height: 15px;
+        }
+        .next-hint {
+            font-size: 11px;
+            color: #718096;
+            text-align: right;
+            transition: opacity 0.2s;
+        }
+        .next-hint.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .footer {
@@ -336,6 +359,7 @@
             .hero,
             .intro,
             .action-bar,
+            .next-btn-wrap,
             .footer { display: none; }
 
             .content {
@@ -397,15 +421,20 @@
                 Discover
             </div>
             <span class="nav-arrow">&rarr;</span>
-            <div class="nav-step">
-                <div class="nav-step-dot"></div>
-                Map
-            </div>
-            <span class="nav-arrow">&rarr;</span>
-            <div class="nav-step">
+            <a href="prioritization.html" class="nav-step">
                 <div class="nav-step-dot"></div>
                 Prioritize
-            </div>
+            </a>
+            <span class="nav-arrow">&rarr;</span>
+            <a href="intersection.html" class="nav-step">
+                <div class="nav-step-dot"></div>
+                Map
+            </a>
+            <span class="nav-arrow">&rarr;</span>
+            <a href="results.html" class="nav-step">
+                <div class="nav-step-dot"></div>
+                Results
+            </a>
         </div>
     </nav>
 
@@ -568,11 +597,15 @@
         <div class="action-bar-left">
             <div class="selection-count" id="selectionCount"><span>0</span> of 10 topics selected</div>
             <button class="clear-btn" id="clearBtn" onclick="clearAll()" disabled>Clear all</button>
+            <button class="clear-btn" id="pdfBtn" onclick="saveAsPDF()" disabled>Save as PDF</button>
         </div>
-        <button class="pdf-btn" id="pdfBtn" onclick="saveAsPDF()" disabled>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-            Save as PDF
-        </button>
+        <div class="next-btn-wrap">
+            <button class="next-btn" id="nextBtn" onclick="goNext()" disabled>
+                Prioritize Challenges
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </button>
+            <div class="next-hint" id="nextHint">Select at least 2 challenges to continue</div>
+        </div>
     </div>
 
     <script>
@@ -580,6 +613,8 @@
         const countEl = document.getElementById('selectionCount');
         const clearBtn = document.getElementById('clearBtn');
         const pdfBtn = document.getElementById('pdfBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const nextHint = document.getElementById('nextHint');
         let selectedCount = 0;
 
         cards.forEach(card => {
@@ -597,12 +632,28 @@
             countEl.innerHTML = `<span>${n}</span> of 10 topic${n === 1 ? '' : 's'} selected`;
             clearBtn.disabled = n === 0;
             pdfBtn.disabled = n === 0;
+            // Minimum 2 selection gate
+            if (n >= 2) {
+                nextBtn.disabled = false;
+                nextHint.classList.add('hidden');
+            } else {
+                nextBtn.disabled = true;
+                nextHint.classList.remove('hidden');
+            }
         }
 
         function clearAll() {
             cards.forEach(c => c.classList.remove('selected'));
             selectedCount = 0;
+            localStorage.removeItem('smb_selected');
             updateBar();
+        }
+
+        function goNext() {
+            const ids = Array.from(document.querySelectorAll('.category-card.selected'))
+                .map(c => parseInt(c.getAttribute('data-id'), 10));
+            localStorage.setItem('smb_selected', JSON.stringify(ids));
+            window.location.href = 'prioritization.html';
         }
 
         function saveAsPDF() {
@@ -613,6 +664,9 @@
             document.title = `${ts}_Business_Development_Opportunities`;
             window.print();
         }
+
+        // Initialize bar state on load
+        updateBar();
     </script>
 
 </body>

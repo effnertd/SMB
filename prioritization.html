@@ -55,9 +55,15 @@
             font-size: 12px;
             font-weight: 600;
             color: #4a7fa8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-step:hover {
+            color: white;
         }
         .nav-step.active {
             color: white;
+            cursor: default;
         }
         .nav-step-dot {
             width: 8px;
@@ -171,7 +177,7 @@
             cursor: default;
             text-decoration: none;
         }
-        .pdf-btn {
+        .next-btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -185,15 +191,12 @@
             font-weight: 600;
             transition: background-color 0.2s;
             white-space: nowrap;
+            text-decoration: none;
         }
-        .pdf-btn:hover {
+        .next-btn:hover {
             background-color: #c53030;
         }
-        .pdf-btn:disabled {
-            background-color: #a0aec0;
-            cursor: not-allowed;
-        }
-        .pdf-btn svg {
+        .next-btn svg {
             width: 15px;
             height: 15px;
         }
@@ -264,6 +267,8 @@
         .matrix-wrapper {
             flex: 1;
             position: relative;
+            padding-left: 60px; /* room for y-axis labels */
+            padding-bottom: 44px; /* room for x-axis labels */
         }
         .matrix {
             width: 100%;
@@ -280,39 +285,46 @@
             color: #1a365d;
             font-size: 14px;
         }
+        /* X-axis — relative to .matrix-wrapper, sits in bottom padding */
         .x-axis {
-            bottom: -35px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
         }
+        .x-low {
+            bottom: 12px;
+            left: 60px; /* aligns with left edge of matrix */
+        }
+        .x-high {
+            bottom: 12px;
+            right: 0;
+        }
+        /* Y-axis — relative to .matrix-wrapper, sits in left padding column */
         .y-axis {
             top: 50%;
-            left: -140px;
+            left: 0;
+            width: 56px;
+            text-align: center;
             transform: translateY(-50%) rotate(-90deg);
             transform-origin: center;
+            white-space: nowrap;
         }
         .axis-low {
             position: absolute;
             font-size: 12px;
             color: #718096;
         }
-        .x-low {
-            bottom: -35px;
-            left: 10px;
-        }
-        .x-high {
-            bottom: -35px;
-            right: 10px;
+        .y-high {
+            top: 0;
+            left: 0;
+            width: 56px;
+            text-align: center;
         }
         .y-low {
-            bottom: 10px;
-            left: -80px;
-            transform: rotate(-90deg);
-        }
-        .y-high {
-            top: 10px;
-            left: -80px;
-            transform: rotate(-90deg);
+            bottom: 44px; /* above x-axis padding */
+            left: 0;
+            width: 56px;
+            text-align: center;
         }
         .quadrant-label {
             position: absolute;
@@ -431,20 +443,25 @@
             SMB Business Needs
         </a>
         <div class="site-nav-steps">
-            <div class="nav-step">
+            <a href="businessopps.html" class="nav-step">
                 <div class="nav-step-dot"></div>
                 Discover
-            </div>
+            </a>
             <span class="nav-arrow">&rarr;</span>
             <div class="nav-step active">
                 <div class="nav-step-dot"></div>
                 Prioritize
             </div>
             <span class="nav-arrow">&rarr;</span>
-            <div class="nav-step">
+            <a href="intersection.html" class="nav-step">
                 <div class="nav-step-dot"></div>
                 Map
-            </div>
+            </a>
+            <span class="nav-arrow">&rarr;</span>
+            <a href="results.html" class="nav-step">
+                <div class="nav-step-dot"></div>
+                Results
+            </a>
         </div>
     </nav>
 
@@ -482,23 +499,25 @@
             </div>
 
             <div class="matrix-wrapper">
+                <!-- Y-axis labels in the left padding column -->
+                <div class="axis-label y-axis">Business Risk (Impact)</div>
+                <div class="axis-low y-high">High</div>
+                <div class="axis-low y-low">Low</div>
+
                 <div class="matrix" id="matrix">
                     <div class="centerline vertical-line"></div>
                     <div class="centerline horizontal-line"></div>
-                    
+
                     <div class="quadrant-label q1">High Risk / High Pain</div>
                     <div class="quadrant-label q2">High Risk / Low Pain</div>
                     <div class="quadrant-label q3">Low Risk / Low Pain</div>
                     <div class="quadrant-label q4">Low Risk / High Pain</div>
-                    
-                    <div class="axis-label y-axis">Business Risk (Impact)</div>
-                    <div class="axis-label x-axis">Current Pain Level</div>
-                    
-                    <div class="axis-low y-low">Low</div>
-                    <div class="axis-low y-high">High</div>
-                    <div class="axis-low x-low">Low</div>
-                    <div class="axis-low x-high">High</div>
                 </div>
+
+                <!-- X-axis labels below the matrix -->
+                <div class="axis-label x-axis">Current Pain Level</div>
+                <div class="axis-low x-low">Low</div>
+                <div class="axis-low x-high">High</div>
             </div>
         </div>
 
@@ -524,14 +543,25 @@
         <div class="action-bar-left">
             <div class="selection-count" id="selectionCount"><span>0</span> of 10 challenges placed</div>
             <button class="clear-btn" id="resetBtn" onclick="resetMatrix()" disabled>Reset matrix</button>
+            <button class="clear-btn" id="pdfBtn" onclick="saveAsPDF()" disabled>Save as PDF</button>
         </div>
-        <button class="pdf-btn" id="pdfBtn" onclick="saveAsPDF()" disabled>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-            Save as PDF
+        <button class="next-btn" id="nextBtn" onclick="goNext()">
+            Map Intersections
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
         </button>
     </div>
 
     <script>
+        // ── Read step 1 selections (graceful fallback: all 10 if none) ──
+        const smbSelected = (function() {
+            try {
+                const raw = localStorage.getItem('smb_selected');
+                if (raw) { const ids = JSON.parse(raw); if (Array.isArray(ids) && ids.length > 0) return ids.map(String); }
+            } catch(e) {}
+            return null;
+        })();
+        const totalChips = smbSelected ? smbSelected.length : 10;
+
         let draggedElement = null;
         let placedChips = new Map();
         const countEl = document.getElementById('selectionCount');
@@ -540,16 +570,24 @@
 
         function updateBar() {
             const n = placedChips.size;
-            countEl.innerHTML = `<span>${n}</span> of 10 challenge${n === 1 ? '' : 's'} placed`;
+            countEl.innerHTML = `<span>${n}</span> of ${totalChips} challenge${n === 1 ? '' : 's'} placed`;
             resetBtn.disabled = n === 0;
             pdfBtn.disabled = n === 0;
+            pdfBtn.style.opacity = n === 0 ? '0.35' : '1';
         }
 
-        // Setup drag handlers for chips
+        // Setup drag handlers — only for visible (selected) chips
         document.querySelectorAll('.chip').forEach(chip => {
-            chip.addEventListener('dragstart', handleDragStart);
-            chip.addEventListener('dragend', handleDragEnd);
+            const id = chip.getAttribute('data-id');
+            if (smbSelected && !smbSelected.includes(id)) {
+                chip.style.display = 'none';
+            } else {
+                chip.addEventListener('dragstart', handleDragStart);
+                chip.addEventListener('dragend', handleDragEnd);
+            }
         });
+
+        updateBar(); // initialize counter with correct totalChips on load
 
         // Setup drop zone
         const matrix = document.getElementById('matrix');
@@ -631,13 +669,39 @@
             placedChips.forEach(chip => chip.remove());
             placedChips.clear();
 
-            // Show all original chips
+            // Show all visible chips (restored)
             document.querySelectorAll('.chip').forEach(chip => {
-                chip.style.opacity = '1';
-                chip.style.pointerEvents = 'auto';
+                if (chip.style.display !== 'none') {
+                    chip.style.opacity = '1';
+                    chip.style.pointerEvents = 'auto';
+                }
             });
 
+            localStorage.removeItem('smb_placements');
             updateBar();
+        }
+
+        function goNext() {
+            const matrixEl = document.getElementById('matrix');
+            const matrixRect = matrixEl.getBoundingClientRect();
+            const placements = {};
+            placedChips.forEach((chipEl, id) => {
+                const x_pct = (parseFloat(chipEl.style.left) / matrixRect.width) * 100;
+                const y_pct = (parseFloat(chipEl.style.top) / matrixRect.height) * 100;
+                let quadrant;
+                if (x_pct > 50 && y_pct < 50)        quadrant = 'High Risk / High Pain';
+                else if (x_pct <= 50 && y_pct < 50)  quadrant = 'High Risk / Low Pain';
+                else if (x_pct <= 50 && y_pct >= 50) quadrant = 'Low Risk / Low Pain';
+                else                                  quadrant = 'Low Risk / High Pain';
+                placements[id] = {
+                    x_pct: parseFloat(x_pct.toFixed(1)),
+                    y_pct: parseFloat(y_pct.toFixed(1)),
+                    label: chipEl.textContent.trim(),
+                    quadrant
+                };
+            });
+            localStorage.setItem('smb_placements', JSON.stringify(placements));
+            window.location.href = 'intersection.html';
         }
 
         function exportSnapshot() {
@@ -709,8 +773,9 @@
 
                 // Restore button after print dialog closes
                 setTimeout(() => {
-                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> Save as PDF`;
+                    btn.textContent = 'Save as PDF';
                     btn.disabled = false;
+                    updateBar();
                 }, 1000);
             }).catch(err => {
                 console.error('Snapshot failed:', err);

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Needs Summary — SMB Business Needs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background-color: #f7fafc;
+        }
+        .site-nav {
+            background-color: #1a365d;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .site-nav-back {
+            color: #a0c4e8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .site-nav-back:hover { color: white; }
+        .site-nav-back svg { width: 14px; height: 14px; }
+        .site-nav-steps {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a7fa8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-step:hover { color: white; }
+        .nav-step.active { color: white; cursor: default; }
+        .nav-step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4a7fa8;
+        }
+        .nav-step.active .nav-step-dot { background-color: #1a365d; border: 2px solid #a0c4e8; }
+        .nav-arrow { color: #4a7fa8; font-size: 14px; }
+
+        /* ── Hero ── */
+        .hero {
+            background-color: #1a365d;
+            color: white;
+            padding: 40px 20px 36px;
+            text-align: center;
+            border-top: 1px solid #2a4a7a;
+        }
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(255,255,255,0.12);
+            color: #a0c4e8;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+        }
+        .hero h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+        .hero-date {
+            font-size: 14px;
+            color: #a0c4e8;
+        }
+        @media (min-width: 768px) {
+            .hero h1 { font-size: 32px; }
+        }
+
+        /* ── Content ── */
+        .content {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 40px 20px 32px;
+        }
+
+        /* ── No-data banner ── */
+        .no-data-banner {
+            background-color: #fffbea;
+            border: 1px solid #f6e05e;
+            border-left: 4px solid #d69e2e;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 28px;
+            font-size: 14px;
+            color: #744210;
+        }
+        .no-data-banner a { color: #028090; font-weight: 600; text-decoration: none; }
+        .no-data-banner a:hover { text-decoration: underline; }
+
+        /* ── Results sections ── */
+        .results-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            margin-bottom: 28px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        .section-teal  { border-left: 4px solid #028090; }
+        .section-red   { border-left: 4px solid #e53e3e; }
+        .section-blue  { border-left: 4px solid #2b6cb0; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid #f0f4f8;
+        }
+        .section-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-number.teal { background-color: #e6f7f9; color: #028090; }
+        .section-number.red  { background-color: #fff5f5; color: #e53e3e; }
+        .section-number.blue { background-color: #ebf4ff; color: #2b6cb0; }
+        .section-header-text { flex: 1; }
+        .section-label-text {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #718096;
+            margin-bottom: 2px;
+        }
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1a365d;
+        }
+        .section-body { padding: 20px 24px 24px; }
+
+        /* ── Empty state ── */
+        .empty-state {
+            color: #a0aec0;
+            font-size: 14px;
+            font-style: italic;
+        }
+        .empty-state a { color: #028090; font-style: normal; font-weight: 600; text-decoration: none; }
+
+        /* ── Section 1: Challenge list ── */
+        .challenge-list { list-style: none; }
+        .challenge-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f4f8;
+        }
+        .challenge-item:last-child { border-bottom: none; }
+        .challenge-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #028090;
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+        .challenge-name { font-size: 14px; font-weight: 600; color: #2d3748; }
+
+        /* ── Section 2: Mini matrix ── */
+        .mini-matrix-wrap { margin-bottom: 24px; }
+        .mini-matrix-outer {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .mini-matrix-y-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4a5568;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .mini-matrix-inner { flex: 1; }
+        .mini-matrix {
+            width: 100%;
+            max-width: 480px;
+            height: 260px;
+            position: relative;
+            border: 2px solid #2d3748;
+            background:
+                linear-gradient(to right, #fef5e7 0%, #fef5e7 50%, #ffebee 50%, #ffebee 100%),
+                linear-gradient(to top,   #e8f5e9 0%, #e8f5e9 50%, #fff9c4 50%, #fff9c4 100%);
+            background-blend-mode: multiply;
+        }
+        .mini-matrix-vline {
+            position: absolute; left: 50%; top: 0; bottom: 0;
+            width: 1px; background-color: rgba(45,55,72,0.4);
+        }
+        .mini-matrix-hline {
+            position: absolute; top: 50%; left: 0; right: 0;
+            height: 1px; background-color: rgba(45,55,72,0.4);
+        }
+        .mini-matrix-qlabel {
+            position: absolute;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #4a5568;
+            opacity: 0.55;
+        }
+        .mini-matrix-qlabel.q1 { top: 6px; right: 6px; text-align: right; }
+        .mini-matrix-qlabel.q2 { top: 6px; left: 6px; }
+        .mini-matrix-qlabel.q3 { bottom: 6px; left: 6px; }
+        .mini-matrix-qlabel.q4 { bottom: 6px; right: 6px; text-align: right; }
+        .mini-dot {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: #e53e3e;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+            cursor: default;
+        }
+        .mini-matrix-x-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4a5568;
+            text-align: center;
+            margin-top: 6px;
+        }
+        .mini-matrix-legend {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .mini-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #4a5568;
+        }
+        .mini-legend-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #e53e3e;
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* ── Section 2: Quadrant groups ── */
+        .quadrant-groups { margin-top: 20px; }
+        .quadrant-group { margin-bottom: 18px; }
+        .quadrant-group:last-child { margin-bottom: 0; }
+        .quadrant-group-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .quadrant-group.q-urgent .quadrant-group-title { color: #c53030; }
+        .quadrant-group.q-watch .quadrant-group-title  { color: #d69e2e; }
+        .quadrant-group.q-quick .quadrant-group-title  { color: #2b6cb0; }
+        .quadrant-group.q-defer .quadrant-group-title  { color: #718096; }
+        .placement-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0;
+        }
+        .placement-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .q-urgent .placement-dot { background-color: #c53030; }
+        .q-watch  .placement-dot { background-color: #d69e2e; }
+        .q-quick  .placement-dot { background-color: #2b6cb0; }
+        .q-defer  .placement-dot { background-color: #a0aec0; }
+        .placement-name { font-size: 14px; font-weight: 600; color: #2d3748; }
+
+        /* ── Section 3: Intersections ── */
+        .intersection-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f4f8;
+        }
+        .intersection-item:last-child { border-bottom: none; }
+        .lightning-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+        .intersection-text { font-size: 14px; font-weight: 600; color: #2d3748; }
+        .intersection-sub { font-size: 12px; color: #718096; margin-top: 1px; }
+
+        /* ── PDF bar ── */
+        .pdf-bar {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 0 20px 48px;
+        }
+        .pdf-main-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            background-color: #1a365d;
+            color: white;
+            border: none;
+            padding: 18px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            box-shadow: 0 4px 12px rgba(26,54,93,0.3);
+        }
+        .pdf-main-btn:hover { background-color: #2a4a7a; }
+        .pdf-main-btn svg { width: 20px; height: 20px; }
+
+        .footer {
+            text-align: center;
+            padding: 32px 20px;
+            color: #a0aec0;
+            font-size: 13px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* ── Print styles ── */
+        @page {
+            size: letter portrait;
+            margin: 0.75in;
+        }
+        @media print {
+            body { background-color: white; }
+            .site-nav, .pdf-bar, .footer, .no-data-banner { display: none !important; }
+
+            .hero {
+                padding: 20px 0 16px;
+                background-color: #1a365d !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .hero h1 { font-size: 22px; }
+
+            .content { padding: 20px 0 0; max-width: 100%; }
+
+            .results-section {
+                box-shadow: none;
+                border-radius: 0;
+                margin-bottom: 18px;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .mini-matrix {
+                max-width: 360px;
+                height: 200px;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="site-nav">
+        <a href="index.html" class="site-nav-back">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            SMB Business Needs
+        </a>
+        <div class="site-nav-steps">
+            <a href="businessopps.html" class="nav-step">
+                <div class="nav-step-dot"></div>
+                Discover
+            </a>
+            <span class="nav-arrow">&rarr;</span>
+            <a href="prioritization.html" class="nav-step">
+                <div class="nav-step-dot"></div>
+                Prioritize
+            </a>
+            <span class="nav-arrow">&rarr;</span>
+            <a href="intersection.html" class="nav-step">
+                <div class="nav-step-dot"></div>
+                Map
+            </a>
+            <span class="nav-arrow">&rarr;</span>
+            <div class="nav-step active">
+                <div class="nav-step-dot"></div>
+                Results
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="step-badge">✦ Summary</div>
+        <h1>Your Business Needs Summary</h1>
+        <div class="hero-date" id="summaryDate"></div>
+    </div>
+
+    <div class="content">
+
+        <div class="no-data-banner" id="noDataBanner" style="display:none;">
+            No session data found. <a href="businessopps.html">Start from Step 1</a> to generate your personalized summary.
+        </div>
+
+        <!-- Section 1: Challenges Identified -->
+        <div class="results-section section-teal">
+            <div class="section-header">
+                <div class="section-number teal">1</div>
+                <div class="section-header-text">
+                    <div class="section-label-text">Step 1 — Discover</div>
+                    <div class="section-title">Challenges Identified</div>
+                </div>
+            </div>
+            <div class="section-body">
+                <div id="challengesList"></div>
+            </div>
+        </div>
+
+        <!-- Section 2: Priority Matrix -->
+        <div class="results-section section-red">
+            <div class="section-header">
+                <div class="section-number red">2</div>
+                <div class="section-header-text">
+                    <div class="section-label-text">Step 2 — Prioritize</div>
+                    <div class="section-title">Priority Matrix Placements</div>
+                </div>
+            </div>
+            <div class="section-body">
+                <div id="matrixSummary"></div>
+            </div>
+        </div>
+
+        <!-- Section 3: Key Intersections -->
+        <div class="results-section section-blue">
+            <div class="section-header">
+                <div class="section-number blue">3</div>
+                <div class="section-header-text">
+                    <div class="section-label-text">Step 3 — Map</div>
+                    <div class="section-title">Key Intersections</div>
+                </div>
+            </div>
+            <div class="section-body">
+                <div id="intersectionsList"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Prominent PDF button -->
+    <div class="pdf-bar">
+        <button class="pdf-main-btn" onclick="saveAsPDF()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            Save Full Summary as PDF
+        </button>
+    </div>
+
+    <div class="footer">SMB Business Needs Toolkit</div>
+
+    <script>
+        // ── Reference data ──
+        const ALL_CATEGORIES = [
+            { id: 1,  label: "Alignment & Getting on the Same Page" },
+            { id: 2,  label: "Process Breakdowns & Bottlenecks" },
+            { id: 3,  label: "Handoffs & Communication Gaps" },
+            { id: 4,  label: "People Working Around the System" },
+            { id: 5,  label: "Scaling & Growth Pains" },
+            { id: 6,  label: "Technology & System Integration" },
+            { id: 7,  label: "Priorities & Decision-Making" },
+            { id: 8,  label: "Customer or Quality Issues" },
+            { id: 9,  label: "New Hire Onboarding" },
+            { id: 10, label: "Unclear Roles & Responsibilities" }
+        ];
+        const ID_TO_LABEL = {};
+        ALL_CATEGORIES.forEach(c => { ID_TO_LABEL[c.id] = c.label; });
+
+        function readStorage(key) {
+            try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; }
+            catch(e) { return null; }
+        }
+
+        const smb_selected      = readStorage('smb_selected');
+        const smb_placements    = readStorage('smb_placements');
+        const smb_intersections = readStorage('smb_intersections');
+
+        // ── Date ──
+        document.getElementById('summaryDate').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        // ── No-data banner ──
+        if (!smb_selected && !smb_placements && !smb_intersections) {
+            document.getElementById('noDataBanner').style.display = 'block';
+        }
+
+        // ── Section 1: Challenges ──
+        (function() {
+            const el = document.getElementById('challengesList');
+            if (!smb_selected || smb_selected.length === 0) {
+                el.innerHTML = '<div class="empty-state">No challenges selected yet. <a href="businessopps.html">Complete Step 1</a> to see results here.</div>';
+                return;
+            }
+            const items = smb_selected.map(id => ALL_CATEGORIES.find(c => c.id === id)).filter(Boolean);
+            el.innerHTML = '<ul class="challenge-list">' + items.map(cat => `
+                <li class="challenge-item">
+                    <div class="challenge-dot"></div>
+                    <div class="challenge-name">${cat.label}</div>
+                </li>
+            `).join('') + '</ul>';
+        })();
+
+        // ── Section 2: Priority Matrix ──
+        (function() {
+            const el = document.getElementById('matrixSummary');
+            if (!smb_placements || Object.keys(smb_placements).length === 0) {
+                el.innerHTML = '<div class="empty-state">No matrix placements yet. <a href="prioritization.html">Complete Step 2</a> to see results here.</div>';
+                return;
+            }
+
+            const entries = Object.entries(smb_placements);
+
+            // Mini matrix visual
+            let matrixHtml = `
+                <div class="mini-matrix-wrap">
+                    <div class="mini-matrix-outer">
+                        <div class="mini-matrix-y-label">↑ Business Risk (Impact) ↑</div>
+                        <div class="mini-matrix-inner">
+                            <div class="mini-matrix" id="miniMatrix">
+                                <div class="mini-matrix-vline"></div>
+                                <div class="mini-matrix-hline"></div>
+                                <div class="mini-matrix-qlabel q2">High Risk<br>Low Pain</div>
+                                <div class="mini-matrix-qlabel q1">High Risk<br>High Pain</div>
+                                <div class="mini-matrix-qlabel q3">Low Risk<br>Low Pain</div>
+                                <div class="mini-matrix-qlabel q4">Low Risk<br>High Pain</div>
+            `;
+            const legendItems = [];
+            entries.forEach(([id, data], idx) => {
+                const num = idx + 1;
+                matrixHtml += `<div class="mini-dot" style="left:${data.x_pct}%;top:${data.y_pct}%;" title="${data.label}">${num}</div>`;
+                legendItems.push(`<div class="mini-legend-item"><div class="mini-legend-dot">${num}</div><span>${data.label}</span></div>`);
+            });
+            matrixHtml += `
+                            </div>
+                            <div class="mini-matrix-x-label">→ Current Pain Level →</div>
+                        </div>
+                    </div>
+                    <div class="mini-matrix-legend">${legendItems.join('')}</div>
+                </div>
+            `;
+
+            // Quadrant groupings
+            const quadrants = {
+                'High Risk / High Pain': [],
+                'High Risk / Low Pain':  [],
+                'Low Risk / High Pain':  [],
+                'Low Risk / Low Pain':   []
+            };
+            entries.forEach(([id, data]) => {
+                if (quadrants[data.quadrant]) quadrants[data.quadrant].push(data.label);
+            });
+
+            const quadrantDefs = [
+                { key: 'High Risk / High Pain', cls: 'q-urgent', title: 'High Risk / High Pain — Act now' },
+                { key: 'High Risk / Low Pain',  cls: 'q-watch',  title: 'High Risk / Low Pain — Watch carefully' },
+                { key: 'Low Risk / High Pain',  cls: 'q-quick',  title: 'Low Risk / High Pain — Quick wins' },
+                { key: 'Low Risk / Low Pain',   cls: 'q-defer',  title: 'Low Risk / Low Pain — Defer' }
+            ];
+
+            let groupsHtml = '<div class="quadrant-groups">';
+            quadrantDefs.forEach(q => {
+                const items = quadrants[q.key];
+                if (!items.length) return;
+                groupsHtml += `
+                    <div class="quadrant-group ${q.cls}">
+                        <div class="quadrant-group-title">${q.title}</div>
+                        ${items.map(label => `
+                            <div class="placement-item">
+                                <div class="placement-dot"></div>
+                                <div class="placement-name">${label}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            groupsHtml += '</div>';
+
+            el.innerHTML = matrixHtml + groupsHtml;
+        })();
+
+        // ── Section 3: Intersections ──
+        (function() {
+            const el = document.getElementById('intersectionsList');
+            if (!smb_intersections || smb_intersections.length === 0) {
+                el.innerHTML = '<div class="empty-state">No intersections marked yet. <a href="intersection.html">Complete Step 3</a> to see results here.</div>';
+                return;
+            }
+
+            const items = smb_intersections.map(cellId => {
+                const [rowId, colId] = cellId.split('-').map(Number);
+                return {
+                    rowLabel: ID_TO_LABEL[rowId] || `Category ${rowId}`,
+                    colLabel: ID_TO_LABEL[colId] || `Category ${colId}`
+                };
+            });
+
+            el.innerHTML = items.map(item => `
+                <div class="intersection-item">
+                    <div class="lightning-icon">⚡</div>
+                    <div>
+                        <div class="intersection-text">${item.rowLabel}</div>
+                        <div class="intersection-sub">intersects with ${item.colLabel}</div>
+                    </div>
+                </div>
+            `).join('');
+        })();
+
+        // ── Save as PDF ──
+        function saveAsPDF() {
+            const now = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            const ts = `${now.getFullYear()}_${pad(now.getMonth()+1)}_${pad(now.getDate())}`;
+            document.title = `${ts}_SMB_Business_Needs_Summary`;
+            window.print();
+        }
+    </script>
+
+</body>
+</html>
