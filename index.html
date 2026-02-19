@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMB Business Needs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background-color: #f7fafc;
+        }
+        .hero {
+            background-color: #1a365d;
+            color: white;
+            padding: 64px 20px 56px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+        .hero p {
+            font-size: 16px;
+            color: #a0c4e8;
+            max-width: 640px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        .content {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 48px 20px 64px;
+        }
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #028090;
+            margin-bottom: 8px;
+        }
+        .section-heading {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a365d;
+            margin-bottom: 12px;
+        }
+        .section-desc {
+            font-size: 15px;
+            color: #4a5568;
+            margin-bottom: 40px;
+            max-width: 640px;
+        }
+        .tools-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .tool-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e2e8f0;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .tool-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .tool-card-accent {
+            height: 4px;
+            width: 100%;
+        }
+        .accent-teal {
+            background-color: #028090;
+        }
+        .accent-coral {
+            background-color: #e53e3e;
+        }
+        .accent-blue {
+            background-color: #2b6cb0;
+        }
+        .tool-card-body {
+            padding: 28px 28px 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .tool-step {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+        .step-teal {
+            background-color: #e6f7f9;
+            color: #028090;
+        }
+        .step-coral {
+            background-color: #fff5f5;
+            color: #e53e3e;
+        }
+        .step-blue {
+            background-color: #ebf4ff;
+            color: #2b6cb0;
+        }
+        .tool-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a365d;
+            margin-bottom: 8px;
+        }
+        .tool-card-desc {
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+        .tool-card-highlights {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px 0;
+        }
+        .tool-card-highlights li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #4a5568;
+            line-height: 1.4;
+        }
+        .tool-card-highlights li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 7px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #cbd5e0;
+        }
+        .tool-card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+            align-self: flex-start;
+        }
+        .link-teal {
+            background-color: #028090;
+            color: white;
+        }
+        .link-teal:hover {
+            background-color: #026670;
+        }
+        .link-coral {
+            background-color: #e53e3e;
+            color: white;
+        }
+        .link-coral:hover {
+            background-color: #c53030;
+        }
+        .link-blue {
+            background-color: #2b6cb0;
+            color: white;
+        }
+        .link-blue:hover {
+            background-color: #1a4d80;
+        }
+        .tool-card-link svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        .workflow-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .workflow-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .workflow-arrow {
+            color: #cbd5e0;
+            font-size: 18px;
+        }
+        .footer {
+            text-align: center;
+            padding: 32px 20px;
+            color: #a0aec0;
+            font-size: 13px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (min-width: 768px) {
+            .hero h1 {
+                font-size: 40px;
+            }
+            .hero p {
+                font-size: 18px;
+            }
+            .tools-grid {
+                gap: 28px;
+            }
+            .tool-card {
+                flex-direction: row;
+            }
+            .tool-card-accent {
+                height: auto;
+                width: 4px;
+            }
+            .tool-card-body {
+                padding: 32px;
+            }
+        }
+
+        @media print {
+            body {
+                background-color: white;
+            }
+            .hero {
+                padding: 32px 20px;
+            }
+            .tool-card {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #cbd5e0;
+            }
+            .tool-card:hover {
+                transform: none;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <h1>Find the Problems Worth Solving</h1>
+        <p>A structured toolkit for discovering, mapping, and prioritizing the challenges that matter most to your business.</p>
+    </div>
+
+    <div class="content">
+
+        <div class="workflow-bar">
+            <div class="workflow-step">
+                <div class="workflow-dot" style="background-color: #028090;"></div>
+                Discover
+            </div>
+            <span class="workflow-arrow">&rarr;</span>
+            <div class="workflow-step">
+                <div class="workflow-dot" style="background-color: #e53e3e;"></div>
+                Prioritize
+            </div>
+            <span class="workflow-arrow">&rarr;</span>
+            <div class="workflow-step">
+                <div class="workflow-dot" style="background-color: #2b6cb0;"></div>
+                Map
+            </div>
+        </div>
+
+        <div class="section-label">The Toolkit</div>
+        <div class="section-heading">Three steps from conversation to action</div>
+        <div class="section-desc">Each tool builds on the last. Start by uncovering real challenges, then prioritize what matters most, and finally map where they compound each other.</div>
+
+        <div class="tools-grid">
+
+            <!-- Tool 1: Business Opportunities -->
+            <div class="tool-card">
+                <div class="tool-card-accent accent-teal"></div>
+                <div class="tool-card-body">
+                    <div class="tool-step step-teal">1</div>
+                    <div class="tool-card-title">Uncover What's Really Going On</div>
+                    <div class="tool-card-desc">
+                        Guided conversation prompts that help uncover the real challenges hiding inside your organization. Pick a topic that resonates and explore what's actually happening day-to-day.
+                    </div>
+                    <ul class="tool-card-highlights">
+                        <li>10 challenge categories from alignment to onboarding</li>
+                        <li>Real-world examples for each topic to spark discussion</li>
+                        <li>Open-ended prompts designed for honest dialogue</li>
+                    </ul>
+                    <a href="businessopps.html" class="tool-card-link link-teal">
+                        Start Discovery
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tool 2: Prioritization Matrix -->
+            <div class="tool-card">
+                <div class="tool-card-accent accent-coral"></div>
+                <div class="tool-card-body">
+                    <div class="tool-step step-coral">2</div>
+                    <div class="tool-card-title">Decide What to Tackle First</div>
+                    <div class="tool-card-desc">
+                        Drag challenge areas onto a Business Risk vs. Current Pain matrix. Visualize which problems demand attention now and which can wait.
+                    </div>
+                    <ul class="tool-card-highlights">
+                        <li>Drag-and-drop interface for intuitive placement</li>
+                        <li>Four quadrants from quick wins to strategic priorities</li>
+                        <li>Save or print your prioritization snapshot</li>
+                    </ul>
+                    <a href="prioritization.html" class="tool-card-link link-coral">
+                        Prioritize Challenges
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tool 3: Challenge Intersections -->
+            <div class="tool-card">
+                <div class="tool-card-accent accent-blue"></div>
+                <div class="tool-card-body">
+                    <div class="tool-step step-blue">3</div>
+                    <div class="tool-card-title">See Where Challenges Collide</div>
+                    <div class="tool-card-desc">
+                        An interactive grid to map where different challenges overlap. When problems compound each other, this tool reveals where the real pain concentrates.
+                    </div>
+                    <ul class="tool-card-highlights">
+                        <li>10x10 matrix of all challenge categories</li>
+                        <li>Click to mark high-pain intersection points</li>
+                        <li>Export or print your intersection map</li>
+                    </ul>
+                    <a href="intersection.html" class="tool-card-link link-blue">
+                        Map Intersections
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer">
+        SMB Business Needs Toolkit
+    </div>
+
+</body>
+</html>

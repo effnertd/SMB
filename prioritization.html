@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Prioritization Matrix — SMB Business Needs</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background-color: #f7fafc;
+        }
+        .site-nav {
+            background-color: #1a365d;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .site-nav-back {
+            color: #a0c4e8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .site-nav-back:hover {
+            color: white;
+        }
+        .site-nav-back svg {
+            width: 14px;
+            height: 14px;
+        }
+        .site-nav-steps {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a7fa8;
+        }
+        .nav-step.active {
+            color: white;
+        }
+        .nav-step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4a7fa8;
+        }
+        .nav-step.active .nav-step-dot {
+            background-color: #e53e3e;
+        }
+        .nav-arrow {
+            color: #4a7fa8;
+            font-size: 14px;
+        }
+        .hero {
+            background-color: #1a365d;
+            color: white;
+            padding: 40px 20px 36px;
+            text-align: center;
+            border-top: 1px solid #2a4a7a;
+        }
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(229, 62, 62, 0.2);
+            color: #fc8181;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+        }
+        .step-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #e53e3e;
+        }
+        .hero h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+            letter-spacing: -0.3px;
+        }
+        .hero p {
+            font-size: 15px;
+            color: #a0c4e8;
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        @media (min-width: 768px) {
+            .hero h1 { font-size: 32px; }
+            .hero p { font-size: 16px; }
+        }
+        .page-body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px 120px;
+        }
+        /* ── Sticky action bar ── */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border-top: 1px solid #e2e8f0;
+            box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            z-index: 100;
+        }
+        .action-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .selection-count {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .selection-count span {
+            color: #e53e3e;
+        }
+        .clear-btn {
+            font-size: 13px;
+            color: #718096;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-weight: 600;
+            text-decoration: underline;
+            transition: color 0.15s;
+        }
+        .clear-btn:hover {
+            color: #2d3748;
+        }
+        .clear-btn:disabled {
+            opacity: 0.35;
+            cursor: default;
+            text-decoration: none;
+        }
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .pdf-btn:hover {
+            background-color: #c53030;
+        }
+        .pdf-btn:disabled {
+            background-color: #a0aec0;
+            cursor: not-allowed;
+        }
+        .pdf-btn svg {
+            width: 15px;
+            height: 15px;
+        }
+        .footer {
+            text-align: center;
+            padding: 32px 20px;
+            color: #a0aec0;
+            font-size: 13px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        h1 {
+            color: #1a365d;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #4a5568;
+            font-size: 16px;
+        }
+        .instructions {
+            background-color: #fff5f5;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 32px;
+            border-left: 4px solid #e53e3e;
+        }
+        .matrix-container {
+            display: flex;
+            gap: 40px;
+            margin-top: 32px;
+        }
+        .chips-container {
+            flex: 0 0 280px;
+        }
+        .chips-header {
+            font-weight: 700;
+            color: #1a365d;
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+        .chip {
+            background-color: #edf2f7;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: move;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .chip:hover {
+            background-color: #e2e8f0;
+            border-color: #2b6cb0;
+        }
+        .chip.dragging {
+            opacity: 0.5;
+        }
+        .matrix-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        .matrix {
+            width: 100%;
+            height: 600px;
+            position: relative;
+            border: 2px solid #2d3748;
+            background: linear-gradient(to right, #fef5e7 0%, #fef5e7 50%, #ffebee 50%, #ffebee 100%),
+                        linear-gradient(to top, #e8f5e9 0%, #e8f5e9 50%, #fff9c4 50%, #fff9c4 100%);
+            background-blend-mode: multiply;
+        }
+        .axis-label {
+            position: absolute;
+            font-weight: 700;
+            color: #1a365d;
+            font-size: 14px;
+        }
+        .x-axis {
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .y-axis {
+            top: 50%;
+            left: -140px;
+            transform: translateY(-50%) rotate(-90deg);
+            transform-origin: center;
+        }
+        .axis-low {
+            position: absolute;
+            font-size: 12px;
+            color: #718096;
+        }
+        .x-low {
+            bottom: -35px;
+            left: 10px;
+        }
+        .x-high {
+            bottom: -35px;
+            right: 10px;
+        }
+        .y-low {
+            bottom: 10px;
+            left: -80px;
+            transform: rotate(-90deg);
+        }
+        .y-high {
+            top: 10px;
+            left: -80px;
+            transform: rotate(-90deg);
+        }
+        .quadrant-label {
+            position: absolute;
+            font-size: 11px;
+            font-weight: 600;
+            color: #4a5568;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+        .q1 { top: 10px; right: 10px; }
+        .q2 { top: 10px; left: 10px; }
+        .q3 { bottom: 10px; left: 10px; }
+        .q4 { bottom: 10px; right: 10px; }
+        .placed-chip {
+            position: absolute;
+            background-color: #2b6cb0;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: move;
+            font-size: 13px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .placed-chip:hover {
+            background-color: #1a365d;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .controls {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        button {
+            background-color: #2b6cb0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        button:hover {
+            background-color: #1a365d;
+        }
+        button.secondary {
+            background-color: #718096;
+        }
+        button.secondary:hover {
+            background-color: #4a5568;
+        }
+        .centerline {
+            position: absolute;
+            background-color: #2d3748;
+        }
+        .vertical-line {
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+        }
+        .horizontal-line {
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+        /* ── Print snapshot view ── */
+        .print-snapshot {
+            display: none;
+        }
+        @page {
+            size: letter landscape;
+            margin: 0.5in;
+        }
+        @media print {
+            /* Hide everything except the snapshot view */
+            body > *:not(.print-snapshot) {
+                display: none !important;
+            }
+            .print-snapshot {
+                display: block !important;
+                width: 100%;
+            }
+            .print-snapshot-header {
+                margin-bottom: 16px;
+                padding-bottom: 12px;
+                border-bottom: 3px solid #e53e3e;
+            }
+            .print-snapshot-header h2 {
+                color: #1a365d;
+                font-size: 18px;
+                margin-bottom: 4px;
+            }
+            .print-snapshot-header p {
+                color: #4a5568;
+                font-size: 12px;
+            }
+            .print-snapshot img {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="site-nav">
+        <a href="index.html" class="site-nav-back">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            SMB Business Needs
+        </a>
+        <div class="site-nav-steps">
+            <div class="nav-step">
+                <div class="nav-step-dot"></div>
+                Discover
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+            <div class="nav-step active">
+                <div class="nav-step-dot"></div>
+                Prioritize
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+            <div class="nav-step">
+                <div class="nav-step-dot"></div>
+                Map
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="step-badge"><span class="step-badge-dot"></span> Step 2</div>
+        <h1>Decide What to Tackle First</h1>
+        <p>Drag challenge categories onto the matrix to visualize which problems demand attention now and which can wait.</p>
+    </div>
+
+    <div class="page-body">
+    <div class="container">
+        <div class="instructions">
+            <strong>How to use this tool:</strong> Drag challenge categories from the left onto the matrix. Place them based on:
+            <br><br>
+            <strong>Y-axis (Business Risk):</strong> How much this problem costs you (money, time, customer trust, employee morale)
+            <br>
+            <strong>X-axis (Current Pain Level):</strong> How much this problem is hurting your team right now (frustration, daily friction, operational pain)
+        </div>
+
+        <div class="matrix-container">
+            <div class="chips-container">
+                <div class="chips-header">Challenge Categories</div>
+                <div id="chipsList">
+                    <div class="chip" draggable="true" data-id="1">Alignment & Getting on the Same Page</div>
+                    <div class="chip" draggable="true" data-id="2">Process Breakdowns & Bottlenecks</div>
+                    <div class="chip" draggable="true" data-id="3">Handoffs & Communication Gaps</div>
+                    <div class="chip" draggable="true" data-id="4">People Working Around the System</div>
+                    <div class="chip" draggable="true" data-id="5">Scaling & Growth Pains</div>
+                    <div class="chip" draggable="true" data-id="6">Technology & System Integration</div>
+                    <div class="chip" draggable="true" data-id="7">Priorities & Decision-Making</div>
+                    <div class="chip" draggable="true" data-id="8">Customer or Quality Issues</div>
+                    <div class="chip" draggable="true" data-id="9">New Hire Onboarding</div>
+                    <div class="chip" draggable="true" data-id="10">Unclear Roles & Responsibilities</div>
+                </div>
+            </div>
+
+            <div class="matrix-wrapper">
+                <div class="matrix" id="matrix">
+                    <div class="centerline vertical-line"></div>
+                    <div class="centerline horizontal-line"></div>
+                    
+                    <div class="quadrant-label q1">High Risk / High Pain</div>
+                    <div class="quadrant-label q2">High Risk / Low Pain</div>
+                    <div class="quadrant-label q3">Low Risk / Low Pain</div>
+                    <div class="quadrant-label q4">Low Risk / High Pain</div>
+                    
+                    <div class="axis-label y-axis">Business Risk (Impact)</div>
+                    <div class="axis-label x-axis">Current Pain Level</div>
+                    
+                    <div class="axis-low y-low">Low</div>
+                    <div class="axis-low y-high">High</div>
+                    <div class="axis-low x-low">Low</div>
+                    <div class="axis-low x-high">High</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls removed; replaced by sticky action bar below -->
+    </div>
+    </div>
+
+    <!-- Print snapshot container (populated by JS before print) -->
+    <div class="print-snapshot" id="printSnapshot">
+        <div class="print-snapshot-header">
+            <h2>Decide What to Tackle First</h2>
+            <p>Challenge Prioritization Matrix — SMB Business Needs Toolkit</p>
+        </div>
+        <img id="printSnapshotImg" src="" alt="Prioritization Matrix">
+    </div>
+
+    <div class="footer">
+        SMB Business Needs Toolkit
+    </div>
+
+    <!-- Sticky action bar -->
+    <div class="action-bar" id="actionBar">
+        <div class="action-bar-left">
+            <div class="selection-count" id="selectionCount"><span>0</span> of 10 challenges placed</div>
+            <button class="clear-btn" id="resetBtn" onclick="resetMatrix()" disabled>Reset matrix</button>
+        </div>
+        <button class="pdf-btn" id="pdfBtn" onclick="saveAsPDF()" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            Save as PDF
+        </button>
+    </div>
+
+    <script>
+        let draggedElement = null;
+        let placedChips = new Map();
+        const countEl = document.getElementById('selectionCount');
+        const resetBtn = document.getElementById('resetBtn');
+        const pdfBtn = document.getElementById('pdfBtn');
+
+        function updateBar() {
+            const n = placedChips.size;
+            countEl.innerHTML = `<span>${n}</span> of 10 challenge${n === 1 ? '' : 's'} placed`;
+            resetBtn.disabled = n === 0;
+            pdfBtn.disabled = n === 0;
+        }
+
+        // Setup drag handlers for chips
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('dragstart', handleDragStart);
+            chip.addEventListener('dragend', handleDragEnd);
+        });
+
+        // Setup drop zone
+        const matrix = document.getElementById('matrix');
+        matrix.addEventListener('dragover', handleDragOver);
+        matrix.addEventListener('drop', handleDrop);
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            e.preventDefault();
+
+            if (draggedElement) {
+                const rect = matrix.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const chipId = draggedElement.getAttribute('data-id');
+                const chipText = draggedElement.textContent;
+
+                // Remove existing chip if it exists
+                if (placedChips.has(chipId)) {
+                    const existingChip = placedChips.get(chipId);
+                    existingChip.remove();
+                }
+
+                // Create new placed chip
+                const placedChip = document.createElement('div');
+                placedChip.className = 'placed-chip';
+                placedChip.textContent = chipText;
+                placedChip.style.left = x + 'px';
+                placedChip.style.top = y + 'px';
+                placedChip.setAttribute('data-id', chipId);
+                
+                // Make it draggable within the matrix
+                placedChip.draggable = true;
+                placedChip.addEventListener('dragstart', function(e) {
+                    draggedElement = this;
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+                placedChip.addEventListener('dragend', function(e) {
+                    draggedElement = null;
+                });
+
+                matrix.appendChild(placedChip);
+                placedChips.set(chipId, placedChip);
+
+                // Hide original chip
+                draggedElement.style.opacity = '0.3';
+                draggedElement.style.pointerEvents = 'none';
+
+                updateBar();
+            }
+
+            return false;
+        }
+
+        function resetMatrix() {
+            // Remove all placed chips
+            placedChips.forEach(chip => chip.remove());
+            placedChips.clear();
+
+            // Show all original chips
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.style.opacity = '1';
+                chip.style.pointerEvents = 'auto';
+            });
+
+            updateBar();
+        }
+
+        function exportSnapshot() {
+            const matrixRect = matrix.getBoundingClientRect();
+            let snapshot = "Challenge Prioritization Snapshot\n";
+            snapshot += "=" .repeat(50) + "\n\n";
+
+            const positions = [];
+            placedChips.forEach((chip, id) => {
+                const chipRect = chip.getBoundingClientRect();
+                const x = ((chipRect.left + chipRect.width/2 - matrixRect.left) / matrixRect.width * 100).toFixed(1);
+                const y = (100 - (chipRect.top + chipRect.height/2 - matrixRect.top) / matrixRect.height * 100).toFixed(1);
+                
+                let quadrant;
+                if (x > 50 && y > 50) quadrant = "High Risk / High Effort";
+                else if (x <= 50 && y > 50) quadrant = "High Risk / Low Effort (PRIORITY)";
+                else if (x <= 50 && y <= 50) quadrant = "Low Risk / Low Effort";
+                else quadrant = "Low Risk / High Effort";
+
+                positions.push({
+                    name: chip.textContent,
+                    risk: y,
+                    effort: x,
+                    quadrant: quadrant
+                });
+            });
+
+            // Sort by risk (high to low)
+            positions.sort((a, b) => b.risk - a.risk);
+
+            positions.forEach(pos => {
+                snapshot += `${pos.name}\n`;
+                snapshot += `  Risk: ${pos.risk}% | Effort: ${pos.effort}%\n`;
+                snapshot += `  Quadrant: ${pos.quadrant}\n\n`;
+            });
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(snapshot).then(() => {
+                alert('Snapshot copied to clipboard!');
+            }).catch(() => {
+                // Fallback: show in alert
+                alert(snapshot);
+            });
+        }
+
+        function saveAsPDF() {
+            if (placedChips.size === 0) return;
+
+            const matrixEl = document.getElementById('matrix');
+            const btn = document.getElementById('pdfBtn');
+            btn.textContent = 'Preparing…';
+            btn.disabled = true;
+
+            html2canvas(matrixEl, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: null,
+                logging: false
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                document.getElementById('printSnapshotImg').src = imgData;
+
+                const now = new Date();
+                const pad = n => String(n).padStart(2, '0');
+                const ts = `${now.getFullYear()}_${pad(now.getMonth()+1)}_${pad(now.getDate())}`;
+                document.title = `${ts}_Challenge_Prioritization_Matrix`;
+
+                window.print();
+
+                // Restore button after print dialog closes
+                setTimeout(() => {
+                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg> Save as PDF`;
+                    btn.disabled = false;
+                }, 1000);
+            }).catch(err => {
+                console.error('Snapshot failed:', err);
+                btn.textContent = 'Save as PDF';
+                btn.disabled = false;
+                alert('Could not capture the matrix. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>
