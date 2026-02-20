@@ -248,11 +248,11 @@
             cursor: pointer;
         }
         .instructions {
-            background-color: #fff5f5;
+            background-color: #f0f4f8;
             padding: 20px;
             border-radius: 6px;
             margin-bottom: 32px;
-            border-left: 4px solid #e53e3e;
+            border-left: 4px solid #718096;
         }
         .matrix-container {
             display: flex;
@@ -497,16 +497,16 @@
         <div class="axis-selector">
             <label for="axisSelect">View by:</label>
             <select id="axisSelect" onchange="switchAxis(this.value)">
+                <option value="importance-satisfaction">Business Value &amp; Current Satisfaction</option>
                 <option value="risk-pain">Business Risk / Current Pain Level</option>
-                <option value="importance-satisfaction">Importance to Business / Satisfaction</option>
             </select>
         </div>
         <div class="instructions">
             Drag each challenge from the left and place it on the map. Think about:
             <br><br>
-            <strong>How much does this cost you?</strong> Think money, time, customer trust, team morale
+            <strong>How valuable would improving this be?</strong> Think revenue, efficiency, competitive edge, team impact
             <br>
-            <strong>How much is it hurting right now?</strong> Think daily friction, frustration, and operational drag
+            <strong>How satisfied are you with where this stands today?</strong> Right = working well, Left = needs work
         </div>
 
         <div class="matrix-container">
@@ -603,18 +603,18 @@
                 instructions: '<strong>How much does this cost you?</strong> Think money, time, customer trust, team morale<br><strong>How much is it hurting right now?</strong> Think daily friction, frustration, and operational drag'
             },
             'importance-satisfaction': {
-                yLabel: 'Importance to Business',
-                xLabel: 'Satisfaction with Current Solution',
+                yLabel: 'Current Satisfaction',
+                xLabel: 'Business Value',
                 quadrants: {
-                    topRight:    'High Importance / High Satisfaction',
-                    topLeft:     'High Importance / Low Satisfaction',
-                    bottomRight: 'Low Importance / High Satisfaction',
-                    bottomLeft:  'Low Importance / Low Satisfaction'
+                    topRight:    'High Satisfaction / High Value',
+                    topLeft:     'High Satisfaction / Low Value',
+                    bottomRight: 'Low Satisfaction / High Value',
+                    bottomLeft:  'Low Satisfaction / Low Value'
                 },
-                instructions: '<strong>Y-axis (Importance):</strong> How critical is this area to your business goals and operations<br><strong>X-axis (Satisfaction):</strong> How satisfied are you with how this area is currently handled (right = more satisfied, left = more problems)'
+                instructions: '<strong>How valuable would improving this be?</strong> Think revenue, efficiency, competitive edge, team impact<br><strong>How satisfied are you with where this stands today?</strong> Right = working well, Left = needs work'
             }
         };
-        let currentAxis = localStorage.getItem('smb_axis') || 'risk-pain';
+        let currentAxis = localStorage.getItem('smb_axis') || 'importance-satisfaction';
 
         let draggedElement = null;
         let placedChips = new Map();
@@ -651,7 +651,7 @@
             document.querySelector('.q4').textContent = cfg.quadrants.bottomRight;
             document.querySelector('.instructions').innerHTML =
                 'Drag each challenge from the left and place it on the map. Think about:<br><br>' + cfg.instructions;
-            document.querySelector('.chips-header').textContent = (id === 'importance-satisfaction') ? 'Challenge Areas' : 'Your Challenges';
+            document.querySelector('.chips-header').textContent = 'Your Challenges';
         }
 
         function switchAxis(id) {

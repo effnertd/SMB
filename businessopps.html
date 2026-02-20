@@ -480,7 +480,7 @@
     <div class="hero">
         <div class="step-badge"><span class="step-badge-dot"></span> Step 1</div>
         <h1>Uncover What's Really Going On</h1>
-        <p>Pick the areas that sound familiar. You don't need to have all the answers — just pick what resonates.</p>
+        <p>Pick the areas where you're facing challenges or looking to improve. You don't need all the answers — just pick what resonates.</p>
     </div>
 
     <div class="content">
@@ -575,7 +575,7 @@
         let selectedCount = 0;
 
         document.querySelectorAll('.category-card').forEach(card => {
-            card.querySelector('.card-main').addEventListener('click', () => toggleCard(card));
+            card.addEventListener('click', () => toggleCard(card));
         });
 
         function toggleCardDetail(e, btn) {
