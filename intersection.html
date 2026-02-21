@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Where to Start">
+    <meta name="theme-color" content="#1a365d">
+    <link rel="manifest" href="manifest.json">
     <title>Step 3: Map — Where to Start</title>
     <style>
+        /* ── iOS 26 / iPhone 13 Pro+ optimizations ── */
+        * { -webkit-tap-highlight-color: transparent; }
+        html { -webkit-text-size-adjust: 100%; }
         * {
             margin: 0;
             padding: 0;
@@ -19,6 +27,8 @@
         .site-nav {
             background-color: #1a365d;
             padding: 12px 20px;
+            /* Safe area: nav clears notch/Dynamic Island */
+            padding-top: calc(12px + env(safe-area-inset-top));
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -128,7 +138,8 @@
         .page-body {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 40px 20px 120px;
+            /* Safe area: clear fixed action bar + home indicator */
+            padding: 40px 20px calc(120px + env(safe-area-inset-bottom));
         }
         .container {
             background-color: white;
@@ -284,6 +295,8 @@
             border-top: 1px solid #e2e8f0;
             box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
             padding: 14px 20px;
+            /* Safe area: clear home indicator */
+            padding-bottom: calc(14px + env(safe-area-inset-bottom));
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -406,6 +419,11 @@
                 page-break-inside: avoid;
                 break-inside: avoid;
             }
+        }
+
+        /* ── Touch: eliminate 300ms delay ── */
+        a, button, .intersection-cell, .next-btn, .reset-btn, .site-nav-back, .nav-step {
+            touch-action: manipulation;
         }
     </style>
 </head>
