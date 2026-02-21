@@ -454,6 +454,91 @@
                 display: block;
             }
         }
+
+        /* ── Tap-to-place banner (mobile only) ── */
+        #pickingBanner { display: none; }
+        @media (max-width: 640px) {
+            #pickingBanner:not([hidden]) { display: block; }
+        }
+
+        /* ── Tap-to-select state ── */
+        .chip.chip-picking {
+            background-color: #2b6cb0;
+            color: white;
+            border-color: #2b6cb0;
+            cursor: pointer;
+        }
+
+        /* ── Mobile layout (≤640px) ── */
+        @media (max-width: 640px) {
+            .container { padding: 20px 16px; }
+
+            /* Stack chips above matrix */
+            .matrix-container {
+                flex-direction: column;
+                gap: 16px;
+                margin-top: 20px;
+            }
+
+            /* Full-width chips, wrap horizontally as pills */
+            .chips-container {
+                flex: none;
+                width: 100%;
+            }
+            #chipsList {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .chip {
+                padding: 8px 12px;
+                font-size: 13px;
+                flex-shrink: 0;
+            }
+
+            /* Shorter matrix height for portrait phones */
+            .matrix {
+                height: 70vw;
+                min-height: 260px;
+                max-height: 380px;
+            }
+
+            /* Tighter axis label spacing */
+            .matrix-wrapper {
+                padding-left: 40px;
+                padding-bottom: 32px;
+            }
+            .axis-label.y-axis { font-size: 10px; }
+            .axis-label.x-axis { font-size: 10px; }
+
+            /* Smaller placed chips so they don't crowd the matrix */
+            .placed-chip {
+                font-size: 11px;
+                padding: 5px 8px;
+                max-width: 100px;
+                white-space: normal;
+                text-align: center;
+                line-height: 1.3;
+            }
+
+            /* Constrain quadrant labels to their quadrant */
+            .quadrant-label {
+                font-size: 9px;
+                letter-spacing: 0;
+                max-width: calc(50% - 20px);
+                line-height: 1.2;
+            }
+
+            /* Action bar stacks vertically */
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 12px 16px;
+            }
+            .action-bar-left { flex-wrap: wrap; }
+            .next-btn { width: 100%; justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -524,6 +609,12 @@
                     <div class="chip" draggable="true" data-id="9">New Hire Onboarding</div>
                     <div class="chip" draggable="true" data-id="10">Unclear Roles & Responsibilities</div>
                 </div>
+            </div>
+
+            <!-- Tap-to-place banner (shown on mobile when a chip is selected) -->
+            <div id="pickingBanner" hidden
+                 style="background:#2b6cb0;color:white;padding:10px 16px;border-radius:6px;
+                        font-size:13px;font-weight:600;text-align:center;">
             </div>
 
             <div class="matrix-wrapper">
@@ -641,6 +732,35 @@
             }
         });
 
+        // ── Tap-to-place: chip selection state ──
+        let selectedChip = null;
+
+        function selectChip(chip) {
+            if (selectedChip) selectedChip.classList.remove('chip-picking');
+            if (selectedChip === chip) { selectedChip = null; updatePickingBanner(); return; }
+            selectedChip = chip;
+            chip.classList.add('chip-picking');
+            updatePickingBanner();
+        }
+
+        function updatePickingBanner() {
+            const banner = document.getElementById('pickingBanner');
+            if (selectedChip) {
+                banner.textContent = 'Tap the map to place: ' + selectedChip.textContent.trim();
+                banner.hidden = false;
+            } else {
+                banner.hidden = true;
+            }
+        }
+
+        // Click handler on each chip (fires on both touch and mouse)
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                if (chip.style.display === 'none' || chip.style.pointerEvents === 'none') return;
+                selectChip(chip);
+            });
+        });
+
         function applyAxis(id) {
             const cfg = AXIS_CONFIGS[id];
             document.querySelector('.y-axis').textContent = cfg.yLabel;
@@ -649,8 +769,11 @@
             document.querySelector('.q2').textContent = cfg.quadrants.topLeft;
             document.querySelector('.q3').textContent = cfg.quadrants.bottomLeft;
             document.querySelector('.q4').textContent = cfg.quadrants.bottomRight;
-            document.querySelector('.instructions').innerHTML =
-                'Drag each challenge from the left and place it on the map. Think about:<br><br>' + cfg.instructions;
+            const isMobile = window.innerWidth <= 640;
+            const actionVerb = isMobile
+                ? 'Tap a challenge to select it, then tap the map to place it. Think about:'
+                : 'Drag each challenge from the left and place it on the map. Think about:';
+            document.querySelector('.instructions').innerHTML = actionVerb + '<br><br>' + cfg.instructions;
             document.querySelector('.chips-header').textContent = 'Your Challenges';
         }
 
@@ -668,6 +791,21 @@
         const matrix = document.getElementById('matrix');
         matrix.addEventListener('dragover', handleDragOver);
         matrix.addEventListener('drop', handleDrop);
+
+        // Tap-to-place: click on matrix places the selected chip
+        matrix.addEventListener('click', function(e) {
+            if (!selectedChip) return;
+            if (e.target.classList.contains('placed-chip')) return;
+            const rect = matrix.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            draggedElement = selectedChip;
+            placeChip(x, y);
+            draggedElement = null;
+            selectedChip.classList.remove('chip-picking');
+            selectedChip = null;
+            updatePickingBanner();
+        });
 
         function handleDragStart(e) {
             draggedElement = this;
@@ -688,54 +826,73 @@
             return false;
         }
 
-        function handleDrop(e) {
-            if (e.stopPropagation) {
-                e.stopPropagation();
-            }
-            e.preventDefault();
+        // Shared placement logic used by both drag-drop and tap-to-place
+        function placeChip(x, y) {
+            const chipId = draggedElement.getAttribute('data-id');
+            const chipText = draggedElement.textContent;
 
+            // Remove existing placed chip if already on the matrix
+            if (placedChips.has(chipId)) {
+                placedChips.get(chipId).remove();
+            }
+
+            // Create new placed chip
+            const placedChip = document.createElement('div');
+            placedChip.className = 'placed-chip';
+            placedChip.textContent = chipText;
+            placedChip.style.left = x + 'px';
+            placedChip.style.top = y + 'px';
+            placedChip.setAttribute('data-id', chipId);
+
+            // Make it draggable within the matrix (desktop)
+            placedChip.draggable = true;
+            placedChip.addEventListener('dragstart', function(e) {
+                draggedElement = this;
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            placedChip.addEventListener('dragend', function(e) {
+                draggedElement = null;
+            });
+
+            // Tap a placed chip to return it to the list (mobile + desktop)
+            placedChip.addEventListener('click', function(e) {
+                e.stopPropagation(); // don't trigger matrix click
+                const id = this.getAttribute('data-id');
+                const originalChip = document.querySelector(`.chip[data-id="${id}"]`);
+                if (originalChip) {
+                    originalChip.style.opacity = '';
+                    originalChip.style.pointerEvents = '';
+                }
+                placedChips.delete(id);
+                this.remove();
+                updateBar();
+                // Clear selection if this chip was the selected one
+                if (selectedChip && selectedChip.getAttribute('data-id') === id) {
+                    selectedChip.classList.remove('chip-picking');
+                    selectedChip = null;
+                    updatePickingBanner();
+                }
+            });
+
+            matrix.appendChild(placedChip);
+            placedChips.set(chipId, placedChip);
+
+            // Dim original chip in the list
+            draggedElement.style.opacity = '0.3';
+            draggedElement.style.pointerEvents = 'none';
+
+            updateBar();
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) e.stopPropagation();
+            e.preventDefault();
             if (draggedElement) {
                 const rect = matrix.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-
-                const chipId = draggedElement.getAttribute('data-id');
-                const chipText = draggedElement.textContent;
-
-                // Remove existing chip if it exists
-                if (placedChips.has(chipId)) {
-                    const existingChip = placedChips.get(chipId);
-                    existingChip.remove();
-                }
-
-                // Create new placed chip
-                const placedChip = document.createElement('div');
-                placedChip.className = 'placed-chip';
-                placedChip.textContent = chipText;
-                placedChip.style.left = x + 'px';
-                placedChip.style.top = y + 'px';
-                placedChip.setAttribute('data-id', chipId);
-                
-                // Make it draggable within the matrix
-                placedChip.draggable = true;
-                placedChip.addEventListener('dragstart', function(e) {
-                    draggedElement = this;
-                    e.dataTransfer.effectAllowed = 'move';
-                });
-                placedChip.addEventListener('dragend', function(e) {
-                    draggedElement = null;
-                });
-
-                matrix.appendChild(placedChip);
-                placedChips.set(chipId, placedChip);
-
-                // Hide original chip
-                draggedElement.style.opacity = '0.3';
-                draggedElement.style.pointerEvents = 'none';
-
-                updateBar();
+                placeChip(x, y);
             }
-
             return false;
         }
 
@@ -754,9 +911,9 @@
 
             localStorage.removeItem('smb_placements');
             localStorage.removeItem('smb_axis');
-            currentAxis = 'risk-pain';
-            document.getElementById('axisSelect').value = 'risk-pain';
-            applyAxis('risk-pain');
+            currentAxis = 'importance-satisfaction';
+            document.getElementById('axisSelect').value = 'importance-satisfaction';
+            applyAxis('importance-satisfaction');
             updateBar();
         }
 
